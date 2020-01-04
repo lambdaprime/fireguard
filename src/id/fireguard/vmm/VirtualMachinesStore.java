@@ -74,7 +74,7 @@ public class VirtualMachinesStore {
 	}
 
 	public String nextId() {
-		return "dbc-" + (store.findAll().size() + 1);
+		return "vm-" + (store.findAll().size() + 1);
 	}
 
 	public VirtualMachineEntity findVm(String vmId) {

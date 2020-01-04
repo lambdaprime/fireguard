@@ -2,13 +2,13 @@ package id.fireguard.vmm;
 
 import static java.lang.String.format;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -25,13 +25,39 @@ public class VirtualMachineManager {
 	private VirtualMachineBuilder builder = new VirtualMachineBuilder();
 	private VmConfigUtils configUtils = new VmConfigUtils();
 
-	public VirtualMachineManager(Settings settings, VirtualMachinesStore manager) {
+	private VirtualMachineManager(Settings settings, VirtualMachinesStore manager) {
 		this.settings = settings;
 		this.manager = manager;
 	}
 
-	public VirtualMachine create(String ip) {
-		validateIfIpAvailable(ip);
+	public static VirtualMachineManager create(Settings settings, VirtualMachinesStore manager) {
+		VirtualMachineManager vmm = new VirtualMachineManager(settings, manager);
+		vmm.updateStates();
+		return vmm;
+	}
+
+	private void updateStates() {
+		List<VirtualMachine> vms = findAll();
+		for (var vm: vms) {
+			if (vm.getState() != State.STARTED) continue;
+			 	boolean isActive = vm.getPid()
+					 .flatMap(ProcessHandle::of)
+					 .map(ProcessHandle::isAlive)
+					 .orElse(false);
+			 if (!isActive)
+				 cleanup(vm);
+		}
+	}
+
+	private void cleanup(VirtualMachine vm) {
+		vm.setState(State.STOPPED);
+		vm.setPid(Optional.empty());
+		var sock = vm.getSocket().toFile();
+		if (sock.exists()) sock.delete();
+		manager.update(asVirtualMachineEntity(vm));
+	}
+
+	public VirtualMachine create(String jqExpr) {
 		var id = manager.nextId();
 		var home = settings.getStage().resolve(id);
 		var socket = home.resolve("firecracker.sock");
@@ -40,22 +66,13 @@ public class VirtualMachineManager {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-		VirtualMachine dbc = builder.build(id, State.UNKNOWN, home, socket);
-		configUtils.setIp(dbc.getVmConfig(), ip);
-		manager.add(asVirtualMachineEntity(dbc));
-		return dbc;
+		VirtualMachine vm = builder.build(id, State.UNKNOWN, home, socket, null);
+		configUtils.update(vm.getVmConfig(), jqExpr);
+		manager.add(asVirtualMachineEntity(vm));
+		return vm;
 	}
 
-	private void validateIfIpAvailable(String ip) {
-		boolean found = findAll().stream().map(VirtualMachine::getVmConfig)
-				.map(VmConfig::getIp)
-				.anyMatch(Predicate.isEqual(ip));
-		if (found) {
-			throw new RuntimeException(format("ip %s is already taken", ip));
-		}
-	}
-
-	private  void copyFolder(Path src, Path dest) throws IOException {
+	private void copyFolder(Path src, Path dest) throws IOException {
 	    Files.walk(src)
 	        .forEach(source -> copy(source, dest.resolve(src.relativize(source))));
 	}
@@ -88,7 +105,8 @@ public class VirtualMachineManager {
 		return builder.build(entity.id,
 				entity.state,
 				Paths.get(entity.homeFolder),
-				Paths.get(entity.socket));
+				Paths.get(entity.socket),
+				entity.pid);
 	}
 
 	private VirtualMachineEntity asVirtualMachineEntity(VirtualMachine vm) {
@@ -97,10 +115,11 @@ public class VirtualMachineManager {
 		entity.homeFolder = vm.getHome().toString();
 		entity.socket = vm.getSocket().toString();
 		entity.state = vm.getState();
+		entity.pid = vm.getPid().orElse(null);
 		return entity;
 	}
 
-	public void start(String vmId) {
+	public VirtualMachine start(String vmId) {
 		VirtualMachine vm = find(vmId);
 		Path socket = vm.getSocket();
 		if (socket.toFile().exists())
@@ -117,14 +136,30 @@ public class VirtualMachineManager {
 		pb.directory(vm.getHome().toFile());
 		try {
 			var proc = pb.start();
+			vm.setPid(Optional.of(findPid(vmId)));
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 		vm.setState(State.STARTED);
 		manager.update(asVirtualMachineEntity(vm));
+		return vm;
 	}
 	
+	private static long findPid(String vmId) {
+		var res = new Exec("screen", "-ls").run().stdout
+			.filter(l -> l.contains(vmId))
+			.collect(Collectors.toList());
+		if (res.size() != 1)
+			throw new RuntimeException("Cannot find PID of the VM");
+		var pid = Long.parseLong(res.get(0).replaceAll("\\s+(\\d+).*", "$1"));
+		return pid;
+	}
+
 	public void stat() {
 		
+	}
+
+	public static void main(String[] args) {
+		System.out.println(findPid("vm-1"));
 	}
 }
