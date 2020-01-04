@@ -1,13 +1,19 @@
 package id.fireguard.vmm.vmconfig;
 
+import static java.util.stream.Collectors.joining;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+
+import id.xfunction.Exec;
+import id.xfunction.Exec.Result;
 
 public class VmConfigUtils {
 
@@ -20,28 +26,43 @@ public class VmConfigUtils {
 				.get("vcpu_count").getAsInt();
 		int memoryGb = machineConfig
 				.get("mem_size_mib").getAsInt() / 1000;
-		JsonObject bootSource = jsonObject
-				.get("boot-source").getAsJsonObject();
-		String ip = readIp(bootSource.get("boot_args").getAsString());
 		var vmConfig =  new VmConfig(vmConfigPath);
 		vmConfig.setVcpu(vcpu);
 		vmConfig.setMemoryGb(memoryGb);
-		vmConfig.setIp(ip);
+//		JsonObject networkIface = ofNullable(jsonObject)
+//				.map(o -> o.get("network-interfaces"))
+//				.map(o -> o.getAsJsonArray())
+//				.filter(a -> a.size() > 0)
+//				.map(a -> a.get(0))
+//				.map(o -> o.getAsJsonObject()).orElse(null);
+//		if (networkIface != null) {
+//			ofNullable(networkIface.get("host_dev_name"))
+//				.map(o -> o.getAsString())
+//				.ifPresent(o -> vmConfig.setHostIface(o));
+//			ofNullable(networkIface.get("guest_mac"))
+//				.map(o -> o.getAsString())
+//				.ifPresent(o -> vmConfig.setMac(o));
+//		}
 		return vmConfig;
 	}
 
-	public void setIp(VmConfig vmConfig, String ip) {
-		Path location = vmConfig.getLocation();
-		var json = readFromFile(location);
-		json = json.replace(vmConfig.getIp(), ip);
-		vmConfig.setIp(ip);
-		writeToFile(location, json);
-	}
-
-	private String readIp(String line) {
-		return line.replaceAll(".*ip=([0-9.]*).*", "$1");
-	}
-
+//	public void setHostIface(VmConfig vmConfig, String hostIface) {
+//		Path location = vmConfig.getLocation();
+//		var json = readFromFile(location);
+//		if (vmConfig.getHostIface().isPresent())
+//			json = json.replace(vmConfig.getHostIface().get(), hostIface);
+//		vmConfig.setHostIface(hostIface);
+//		writeToFile(location, json);
+//	}
+//
+//	public void setMac(VmConfig vmConfig, String mac) {
+//		Path location = vmConfig.getLocation();
+//		var json = readFromFile(location);
+//		if (vmConfig.getMac().isPresent())
+//			json = json.replace(vmConfig.getMac().get(), mac);
+//		vmConfig.setMac(mac);
+//		writeToFile(location, json);
+//	}
 
 	private void writeToFile(Path location, String data) {
 		try {
@@ -61,6 +82,27 @@ public class VmConfigUtils {
 
 	public static void main(String[] args) {
 		VmConfigUtils utils = new VmConfigUtils();
-		System.out.println(utils.readIp("boot_args\": \"console=ttyS0 reboot=k panic=1 pci=off ip=172.16.0.2"));
+	}
+
+	public void update(VmConfig vmConfig, String jqExpr) {
+		try {
+			var location = vmConfig.getLocation();
+			var json = readFromFile(location);
+			Result result = new Exec("jq", jqExpr)
+				.withInput(Files.readAllLines(vmConfig.getLocation()).stream())
+				.run();
+			if (result.code.get() != 0) {
+				var msg = asString(result.stderr);
+				throw new RuntimeException(msg);
+			}
+			json = asString(result.stdout);
+			writeToFile(location, json);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private String asString(Stream<String> stream) {
+		return stream.collect(joining("\n"));
 	}
 }

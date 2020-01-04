@@ -1,5 +1,7 @@
 package id.fireguard;
 
+import static id.xfunction.XUtils.error;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.nio.file.Path;
@@ -30,9 +32,9 @@ public class Settings {
 
 	private static Properties loadProperties() throws Exception {
 		Properties defaultProps = new Properties();
-        File config = Paths.get(System.getProperty("user.home"), ".dbcm").toFile();
+        File config = Paths.get(System.getProperty("user.home"), ".fireguard").toFile();
         if (!config.exists()) {
-        	config.createNewFile();
+        	error(String.format("Config file %s not found", config));
         }
 		FileInputStream in = new FileInputStream(config);
         defaultProps.load(in);

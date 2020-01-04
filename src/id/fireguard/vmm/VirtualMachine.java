@@ -3,6 +3,7 @@ package id.fireguard.vmm;
 import static java.lang.String.format;
 
 import java.nio.file.Path;
+import java.util.Optional;
 
 import id.fireguard.vmm.vmconfig.VmConfig;
 
@@ -12,6 +13,7 @@ public class VirtualMachine {
 	private State state;
 	private Path home, socket;
 	private VmConfig vmConfig;
+	private Optional<Long> pid = Optional.empty();
 
 	public VirtualMachine withId(String id) {
 		this.id = id;
@@ -35,6 +37,11 @@ public class VirtualMachine {
 
 	public VirtualMachine withState(State state) {
 		this.state = state;
+		return this;
+	}
+
+	public VirtualMachine withPid(Long pid) {
+		this.pid = Optional.ofNullable(pid);
 		return this;
 	}
 
@@ -62,6 +69,14 @@ public class VirtualMachine {
 		this.state = state;
 	}
 
+	public Optional<Long> getPid() {
+		return pid;
+	}
+
+	public void setPid(Optional<Long> pid) {
+		this.pid = pid;
+	}
+
 	@Override
 	public String toString() {
 		var sb = new StringBuilder();
@@ -69,7 +84,9 @@ public class VirtualMachine {
 		sb.append(format("home folder: %s\n", home));
 		sb.append(format("socket: %s\n", socket));
 		sb.append(format("state: %s\n", state));
+		sb.append(format("pid: %s\n", pid));
 		sb.append(format("vmConfig: %s\n", vmConfig));
 		return sb.toString();
 	}
+
 }

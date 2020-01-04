@@ -37,7 +37,7 @@ public class FireGuardApp {
         var pm = VirtualMachinesStore.load(settings.getStore());
         setup(settings.getStage());
 
-        var dbcm = new VirtualMachineManager(settings, pm);
+        var dbcm = VirtualMachineManager.create(settings, pm);
         var app = new FireGuardApp(dbcm);
         var cmd = args[0];
         switch (cmd) {
@@ -64,10 +64,10 @@ public class FireGuardApp {
 		f.mkdirs();
 	}
 
-	private void create(String ip) {
+	private void create(String jqExpr) {
 		out.println("Creating new VM...");
-		VirtualMachine dbc = vmm.create(ip);
-		out.println(dbc);
+		VirtualMachine vm = vmm.create(jqExpr);
+		out.println(vm);
 	}
 
 

@@ -4,6 +4,7 @@ import static java.lang.String.format;
 
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.Optional;
 
 public class VirtualMachineEntity implements Serializable {
 
@@ -13,6 +14,7 @@ public class VirtualMachineEntity implements Serializable {
 	String homeFolder;
 	String socket;
 	State state;
+	Long pid;
 
     @Override
     public boolean equals(Object obj) {
@@ -41,6 +43,7 @@ public class VirtualMachineEntity implements Serializable {
 		sb.append(format("home folder: %s\n", homeFolder));
 		sb.append(format("socket: %s\n", socket));
 		sb.append(format("state: %s\n", state));
+		sb.append(format("pid: %s\n", pid));
 		return sb.toString();
 	}
 }
