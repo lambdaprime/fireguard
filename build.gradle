@@ -1,0 +1,64 @@
+// gradle clean build
+
+plugins {
+    id 'java'
+}
+
+repositories {
+    mavenCentral()
+}
+ 
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+}
+
+sourceCompatibility = '11'
+targetCompatibility = '11'
+
+String releaseFileName = "fireguard.zip"
+
+jar { 
+    manifest { 
+        attributes 'Main-Class': 'id.fireguard.FireGuardApp',
+                   'Class-Path': configurations.compile.collect { it.getName() }.join(' ')
+    }
+}
+
+compileJava {
+    doFirst {
+        options.compilerArgs = [
+            '--module-path', classpath.asPath,
+        ]
+        classpath = files()  
+    }
+}
+
+task packageDistribution(type: Zip) {
+    archiveFileName = releaseFileName
+    destinationDirectory = file("$projectDir/release")
+    from file("$projectDir/release/fireguard")
+}
+
+task createRelease(type: Copy) {
+    def out = 'release/fireguard/fireguard'
+    from jar.archiveFile
+    from file("$projectDir/libs")
+    from "$projectDir/README.md"
+    from "$projectDir/src/fireguard"
+    into out
+}
+
+task cleanRelease(type: Delete) {
+    delete "$projectDir/release"
+}
+
+packageDistribution.dependsOn createRelease
+assemble.dependsOn packageDistribution
+clean.dependsOn cleanRelease
+
+task copyReadme(type: Copy) {
+    from("$projectDir/README.md")
+    into("$projectDir/src/main/resources")
+}
+
+compileJava.dependsOn copyReadme

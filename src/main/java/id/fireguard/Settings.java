@@ -10,17 +10,17 @@ import java.util.Properties;
 
 public class Settings {
 
-	private Path stage, originVm, store, firecracker;
+    private Path stage, originVm, store, firecracker;
 
-	public Path getStage() {
-		return stage;
-	}
+    public Path getStage() {
+        return stage;
+    }
 
-	public Path getOriginVM() {
-		return originVm;
-	}
+    public Path getOriginVM() {
+        return originVm;
+    }
 
-	public static Settings load() throws Exception {
+    public static Settings load() throws Exception {
         Properties defaultProps = loadProperties();
         var settings = new Settings();
         settings.store = Paths.get(defaultProps.getProperty("store"));
@@ -28,25 +28,25 @@ public class Settings {
         settings.stage = Paths.get(defaultProps.getProperty("stage"));
         settings.firecracker = Paths.get(defaultProps.getProperty("firecracker"));
         return settings;
-	}
+    }
 
-	private static Properties loadProperties() throws Exception {
-		Properties defaultProps = new Properties();
+    private static Properties loadProperties() throws Exception {
+        Properties defaultProps = new Properties();
         File config = Paths.get(System.getProperty("user.home"), ".fireguard").toFile();
         if (!config.exists()) {
-        	error(String.format("Config file %s not found", config));
+            error(String.format("Config file %s not found", config));
         }
-		FileInputStream in = new FileInputStream(config);
+        FileInputStream in = new FileInputStream(config);
         defaultProps.load(in);
         in.close();
         return defaultProps;
-	}
+    }
 
-	public Path getStore() {
-		return store;
-	}
+    public Path getStore() {
+        return store;
+    }
 
-	public Path getFirecracker() {
-		return firecracker;
-	}
+    public Path getFirecracker() {
+        return firecracker;
+    }
 }
