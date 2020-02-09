@@ -6,6 +6,7 @@ import static java.lang.System.out;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Optional;
 import java.util.Scanner;
 
 import id.fireguard.vmm.VirtualMachinesStore;
@@ -68,7 +69,7 @@ public class FireGuardApp {
         f.mkdirs();
     }
 
-    private void create(String jqExpr) {
+    private void create(Optional<String> jqExpr) {
         out.println("Creating new VM...");
         VirtualMachine vm = vmm.create(jqExpr);
         out.println(vm);
@@ -93,7 +94,7 @@ public class FireGuardApp {
         var app = new FireGuardApp(dbcm);
         var cmd = args[0];
         switch (cmd) {
-        case "create": app.create(args[1]); break;
+        case "create": app.create(args.length == 2? Optional.of(args[1]): Optional.empty()); break;
         case "showAll": app.showAll(); break;
         case "startAll": app.startAll(); break;
         case "stopAll": app.stopAll(); break;
