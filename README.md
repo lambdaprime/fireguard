@@ -2,6 +2,10 @@ fireguard - Firecracker MicroVMs management application
 
 lambdaprime <id.blackmesa@gmail.com>
 
+# Quick Start
+
+See [Quick Start](/QuickStart.md) for more details.
+
 # Requirements
 
 - Java 11

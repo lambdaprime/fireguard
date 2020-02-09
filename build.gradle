@@ -49,6 +49,7 @@ task createRelease(type: Copy) {
     from jar.archiveFile
     from file("$projectDir/libs")
     from "$projectDir/README.md"
+    from "$projectDir/QuickStart.md"
     from "$projectDir/src/fireguard"
     into out
 }
