@@ -1,0 +1,5 @@
+- start VMs in parallel
+- stress test for how fast to start 100 VMs
+- stat command which will show CPU/memory statistics for VM
+- print total number of VMs in startAll/showAll
+- support logs.fifo in origin VM
