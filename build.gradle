@@ -51,6 +51,7 @@ task createRelease(type: Copy) {
     from "$projectDir/README.md"
     from "$projectDir/QuickStart.md"
     from "$projectDir/src/fireguard"
+    from "$projectDir/src/setup_netiface.sh"
     into out
 }
 
