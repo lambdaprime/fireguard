@@ -46,7 +46,7 @@ fireguard <COMMAND>
 
 COMMAND is one of the following:
 
-- create JQ\_EXPRESSION -- create a new VM by copying ORIGIN to a STAGE and updating its vm\_config.json with accordance to JQ_EXPRESSION
+- create [JQ\_EXPRESSION] -- create a new VM by copying ORIGIN to a STAGE. If JQ_EXPRESSION is given then update its vm\_config.json with accordance to it.
 - showAll -- show information about all available VMs
 - startAll -- start all VMs
 - stopAll -- stop all VMs (right now it is done by killing the process)
