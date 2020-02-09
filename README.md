@@ -13,6 +13,10 @@ See [Quick Start](/QuickStart.md) for more details.
 - firecracker v0.20.0
 - jq-1.5-1-a5b5cbe
 
+# Download
+
+You can download **fireguard** from <https://github.com/lambdaprime/fireguard/tree/master/release>
+
 # Configuration
 
 Before using **fireguard** make sure to create configuration file .fireguard and place it in your $HOME location:
