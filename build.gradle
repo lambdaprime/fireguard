@@ -15,7 +15,8 @@ dependencies {
 sourceCompatibility = '11'
 targetCompatibility = '11'
 
-String releaseFileName = "fireguard.zip"
+def projectName = 'fireguard'
+def releaseFileName = "${projectName}.zip"
 
 jar { 
     manifest { 
@@ -34,13 +35,17 @@ compileJava {
 }
 
 task packageDistribution(type: Zip) {
-    archiveFileName = releaseFileName
+    archiveFileName = "$releaseFileName"
     destinationDirectory = file("$projectDir/release")
-    from file("$projectDir/release/fireguard")
+    from file("$projectDir/release/$projectName")
+}
+
+packageDistribution.doLast {
+    delete "$projectDir/release/$projectName"
 }
 
 task createRelease(type: Copy) {
-    def out = 'release/fireguard/fireguard'
+    def out = "release/$projectName/$projectName"
     from jar.archiveFile
     from file("$projectDir/libs")
     from "$projectDir/README.md"
