@@ -31,7 +31,7 @@ public class VirtualMachineManager {
         return vmm;
     }
 
-    public VirtualMachine create(String jqExpr) {
+    public VirtualMachine create(Optional<String> jqExpr) {
         var id = manager.nextId();
         var home = settings.getStage().resolve(id);
         var socket = home.resolve("firecracker.sock");
@@ -40,7 +40,7 @@ public class VirtualMachineManager {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        configUtils.update(home, jqExpr);
+        jqExpr.ifPresent(jqexp -> configUtils.update(home, jqexp));
         VirtualMachine vm = builder.build(id, State.STOPPED, home, socket, Optional.empty());
         manager.add(asVirtualMachineEntity(vm));
         return vm;
