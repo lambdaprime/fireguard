@@ -1,71 +1,9 @@
-// gradle clean build
-
-plugins {
-    id 'java'
-}
-
-repositories {
-    mavenCentral()
-}
- 
-dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-}
-
-sourceCompatibility = '11'
-targetCompatibility = '11'
-
-def projectName = 'fireguard'
-def releaseFileName = "${projectName}.zip"
-
-jar { 
-    manifest { 
-        attributes 'Main-Class': 'id.fireguard.FireGuardApp',
-                   'Class-Path': configurations.compile.collect { it.getName() }.join(' ')
+allprojects {
+    repositories {
+        jcenter() 
     }
 }
 
-compileJava {
-    doFirst {
-        options.compilerArgs = [
-            '--module-path', classpath.asPath,
-        ]
-        classpath = files()  
-    }
+subprojects {
+    version = '1.0'
 }
-
-task packageDistribution(type: Zip) {
-    archiveFileName = "$releaseFileName"
-    destinationDirectory = file("$projectDir/release")
-    from file("$projectDir/release/$projectName")
-}
-
-packageDistribution.doLast {
-    delete "$projectDir/release/$projectName"
-}
-
-task createRelease(type: Copy) {
-    def out = "release/$projectName/$projectName"
-    from jar.archiveFile
-    from file("$projectDir/libs")
-    from "$projectDir/README.md"
-    from "$projectDir/QuickStart.md"
-    from "$projectDir/src/fireguard"
-    from "$projectDir/src/setup_netiface.sh"
-    into out
-}
-
-task cleanRelease(type: Delete) {
-    delete "$projectDir/release"
-}
-
-packageDistribution.dependsOn createRelease
-assemble.dependsOn packageDistribution
-clean.dependsOn cleanRelease
-
-task copyReadme(type: Copy) {
-    from("$projectDir/README.md")
-    into("$projectDir/src/main/resources")
-}
-
-compileJava.dependsOn copyReadme
