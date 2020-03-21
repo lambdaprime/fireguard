@@ -15,6 +15,46 @@ public class VirtualMachineEntity implements Serializable {
     State state;
     Long pid;
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getHomeFolder() {
+        return homeFolder;
+    }
+
+    public void setHomeFolder(String homeFolder) {
+        this.homeFolder = homeFolder;
+    }
+
+    public String getSocket() {
+        return socket;
+    }
+
+    public void setSocket(String socket) {
+        this.socket = socket;
+    }
+
+    public State getState() {
+        return state;
+    }
+
+    public void setState(State state) {
+        this.state = state;
+    }
+
+    public Long getPid() {
+        return pid;
+    }
+
+    public void setPid(Long pid) {
+        this.pid = pid;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {

@@ -1,10 +1,8 @@
 package id.fireguard.vmm;
 
-import static java.lang.System.out;
 import static java.util.stream.Collectors.toList;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
 import id.xfunction.ObjectsStore;
@@ -41,25 +39,6 @@ public class VirtualMachinesStore {
 
     public static VirtualMachinesStore load(Path store) {
         return new VirtualMachinesStore(ObjectsStore.load(store));
-    }
-
-    public static void main(String[] args) {
-        Path store = Paths.get("/tmp/store");
-        VirtualMachinesStore pm = load(store);
-        VirtualMachineEntity entity1 = new VirtualMachineEntity();
-        entity1.homeFolder = "/tmp/lol";
-        entity1.socket = "/tmp/sock";
-        pm.add(entity1);
-
-        VirtualMachineEntity entity2 = new VirtualMachineEntity();
-        entity2.homeFolder = "/tmp/lol2";
-        entity2.socket = "/tmp/sock1";
-        pm.add(entity2);
-
-        pm.save();
-
-        pm = load(store);
-        pm.findAll().forEach(out::println);
     }
 
     public String nextId() {
