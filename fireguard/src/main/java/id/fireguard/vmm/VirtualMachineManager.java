@@ -167,7 +167,7 @@ public class VirtualMachineManager {
 
     private void killAndWait(ProcessHandle ph) {
         ph.destroy();
-        Unchecked.runUnchecked(() -> ph.onExit().get());
+        Unchecked.run(() -> ph.onExit().get());
     }
 
 }

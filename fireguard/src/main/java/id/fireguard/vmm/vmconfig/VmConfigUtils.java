@@ -12,8 +12,8 @@ import java.util.stream.Stream;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import id.xfunction.Exec;
-import id.xfunction.Exec.Result;
+import id.xfunction.XExec;
+import id.xfunction.XProcess;
 
 public class VmConfigUtils {
 
@@ -38,14 +38,14 @@ public class VmConfigUtils {
         Path vmConfigPath = vmHome.resolve(VM_CONFIG_JSON);
         try {
             var json = readFromFile(vmConfigPath);
-            Result result = new Exec("jq", jqExpr)
+            XProcess result = new XExec("jq", jqExpr)
                     .withInput(Files.readAllLines(vmConfigPath).stream())
                     .run();
-            if (result.code.get() != 0) {
-                var msg = asString(result.stderr);
+            if (result.code().get() != 0) {
+                var msg = asString(result.stderr());
                 throw new RuntimeException(msg);
             }
-            json = asString(result.stdout);
+            json = asString(result.stdout());
             writeToFile(vmConfigPath, json);
         } catch (Exception e) {
             throw new RuntimeException(e);
