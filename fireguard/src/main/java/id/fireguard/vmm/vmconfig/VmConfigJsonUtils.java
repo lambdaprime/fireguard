@@ -3,28 +3,24 @@ package id.fireguard.vmm.vmconfig;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.stream.Collectors;
+import java.nio.file.Paths;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.Gson;
 
 public class VmConfigJsonUtils {
 
     public VmConfigJson load(Path location) {
         try {
-            var json = Files.readAllLines(location).stream().collect(Collectors.joining("\n"));
-            JsonObject jsonObject = new JsonParser().parse(json).getAsJsonObject();
-            JsonObject machineConfig = jsonObject.get("machine-config").getAsJsonObject();
-            int vcpu = machineConfig
-                    .get("vcpu_count").getAsInt();
-            int memoryGb = machineConfig
-                    .get("mem_size_mib").getAsInt();
-            var vmConfig =  new VmConfigJson();
-            vmConfig.setVcpu(vcpu);
-            vmConfig.setMemoryGb(memoryGb);
+        	Gson gson = new Gson();
+        	var vmConfig = gson.fromJson(Files.newBufferedReader(location), VmConfigJson.class);
+        	//System.out.println(gson.toJson(vmConfig));
             return vmConfig;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
+    
+    public static void main(String[] args) {
+		new VmConfigJsonUtils().load(Paths.get("/home/ubuntu/vms/orc/stage/vm-2/vm_config.json"));
+	}
 }
