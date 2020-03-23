@@ -8,44 +8,47 @@ import java.util.Optional;
 public class VmConfig {
 
     private Path location;
-    private int memoryGb, vcpu;
-    private Optional<String> hostIface = Optional.empty();
-    private Optional<String> mac = Optional.empty();
+    private VmConfigJson json;
 
-    VmConfig(Path location) {
+    VmConfig(Path location, VmConfigJson json) {
         this.location = location;
+        this.json = json;
     }
 
     public int getMemoryGb() {
-        return memoryGb;
+        return json.machineConfig.memory;
     }
 
     void setMemoryGb(int memoryGb) {
-        this.memoryGb = memoryGb;
+        json.machineConfig.memory = memoryGb;
     }
 
     public int getVcpu() {
-        return vcpu;
+        return json.machineConfig.vcpu;
     }
 
     void setVcpu(int vcpu) {
-        this.vcpu = vcpu;
+    	json.machineConfig.vcpu = vcpu;
     }
 
     public Optional<String> getHostIface() {
-        return hostIface;
+    	var ifaces = json.networkInterfaces;
+    	if (ifaces.isEmpty()) return Optional.empty();
+        return Optional.of(ifaces.get(0).hostDevName);
     }
 
     void setHostIface(String hostIface) {
-        this.hostIface = Optional.of(hostIface);
+    	json.networkInterfaces.get(0).hostDevName = hostIface;
     }
 
     public Optional<String> getMac() {
-        return mac;
+    	var ifaces = json.networkInterfaces;
+    	if (ifaces.isEmpty()) return Optional.empty();
+        return Optional.of(ifaces.get(0).mac);
     }
 
     public void setMac(String mac) {
-        this.mac =  Optional.of(mac);
+    	json.networkInterfaces.get(0).mac =  mac;
     }
 
     public Path getLocation() {
@@ -56,10 +59,10 @@ public class VmConfig {
     public String toString() {
         var sb = new StringBuilder();
         sb.append(format("path: %s\n", location.toString()));
-        sb.append(format("memoryGb: %s\n", memoryGb));
-        sb.append(format("vcpu: %s\n", vcpu));
-        sb.append(format("hostIface: %s\n", hostIface));
-        sb.append(format("mac: %s\n", mac));
+        sb.append(format("memoryGb: %s\n", getMemoryGb()));
+        sb.append(format("vcpu: %s\n", getVcpu()));
+        sb.append(format("hostIface: %s\n", getHostIface()));
+        sb.append(format("mac: %s\n", getMac()));
         return sb.toString();
     }
 }

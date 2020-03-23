@@ -9,28 +9,25 @@ import java.nio.file.StandardOpenOption;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
 import id.xfunction.XExec;
 import id.xfunction.XProcess;
 
 public class VmConfigUtils {
 
     private static final String VM_CONFIG_JSON = "vm_config.json";
+    private final VmConfigJsonUtils vmJsonUtils;
+
+    public VmConfigUtils() {
+    	this(new VmConfigJsonUtils());
+    }
+
+    public VmConfigUtils(VmConfigJsonUtils vmJsonUtils) {
+		this.vmJsonUtils = vmJsonUtils;
+	}
 
     public VmConfig load(Path vmHome) {
         Path vmConfigPath = vmHome.resolve(VM_CONFIG_JSON);
-        var json = readFromFile(vmConfigPath);
-        JsonObject jsonObject = new JsonParser().parse(json).getAsJsonObject();
-        JsonObject machineConfig = jsonObject.get("machine-config").getAsJsonObject();
-        int vcpu = machineConfig
-                .get("vcpu_count").getAsInt();
-        int memoryGb = machineConfig
-                .get("mem_size_mib").getAsInt() / 1000;
-        var vmConfig =  new VmConfig(vmConfigPath);
-        vmConfig.setVcpu(vcpu);
-        vmConfig.setMemoryGb(memoryGb);
+        var vmConfig =  new VmConfig(vmConfigPath, vmJsonUtils.load(vmConfigPath));
         return vmConfig;
     }
 
