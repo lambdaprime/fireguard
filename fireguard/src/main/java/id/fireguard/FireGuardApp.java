@@ -43,7 +43,7 @@ public class FireGuardApp {
         	.parse(args);
 
         var settings = Settings.load();
-        var pm = VirtualMachinesStore.load(settings.getStore());
+        var pm = VirtualMachinesStore.load(settings.getVmStore());
         setup(settings.getStage());
 
         var vmm = VirtualMachineManager.create(settings, pm);
