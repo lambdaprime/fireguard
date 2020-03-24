@@ -10,7 +10,7 @@ import java.util.Properties;
 
 public class Settings {
 
-    private Path stage, originVm, store, firecracker;
+    private Path stage, originVm, vmStore, firecracker;
 
     public Path getStage() {
         return stage;
@@ -23,7 +23,7 @@ public class Settings {
     public static Settings load() throws Exception {
         Properties defaultProps = loadProperties();
         var settings = new Settings();
-        settings.store = Paths.get(defaultProps.getProperty("store"));
+        settings.vmStore = Paths.get(defaultProps.getProperty("store"), "vm");
         settings.originVm = Paths.get(defaultProps.getProperty("originVm"));
         settings.stage = Paths.get(defaultProps.getProperty("stage"));
         settings.firecracker = Paths.get(defaultProps.getProperty("firecracker"));
@@ -42,8 +42,8 @@ public class Settings {
         return defaultProps;
     }
 
-    public Path getStore() {
-        return store;
+    public Path getVmStore() {
+        return vmStore;
     }
 
     public Path getFirecracker() {
