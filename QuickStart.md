@@ -86,7 +86,7 @@ FIRECRACKER -- fullpath to firecracker executable
 Create VMs:
 
 ```bash
-% fireguard create
+% fireguard vm create
 Creating new VM...
 id: vm-1
 home folder: ***/stage/vm-1
@@ -99,7 +99,7 @@ vcpu: 1
 hostIface: Optional.empty
 mac: Optional.empty
 
-% fireguard create
+% fireguard vm create
 Creating new VM...
 id: vm-2
 home folder: ***/stage/vm-2
@@ -116,7 +116,7 @@ mac: Optional.empty
 Start all VMs:
 
 ```bash
-% fireguard startAll 
+% fireguard vm startAll 
 Starting VM with id vm-2...
 Starting VM with id vm-1...
 ```
