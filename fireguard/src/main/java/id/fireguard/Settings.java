@@ -8,11 +8,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
 
+import id.xfunction.XAsserts;
+
 public class Settings {
 
-    private Path stage, originVm, vmStore, firecracker;
+	private Path stage, originVm, vmStore, firecracker;
 
-    public Path getStage() {
+	public Path getStage() {
         return stage;
     }
 
@@ -21,20 +23,27 @@ public class Settings {
     }
 
     public static Settings load() throws Exception {
-        Properties defaultProps = loadProperties();
+    	return load(Paths.get(System.getProperty("user.home"), ".fireguard"));
+    }
+    
+    public static Settings load(Path configFile) throws Exception {
+        Properties defaultProps = loadProperties(configFile);
         var settings = new Settings();
-        settings.vmStore = Paths.get(defaultProps.getProperty("store"), "vm");
+        String store = defaultProps.getProperty("store");
+        XAsserts.assertNotNull(store, "Wrong config file. Property 'store' is missing.");
+        settings.vmStore = Paths.get(store, "vm");
         settings.originVm = Paths.get(defaultProps.getProperty("originVm"));
         settings.stage = Paths.get(defaultProps.getProperty("stage"));
         settings.firecracker = Paths.get(defaultProps.getProperty("firecracker"));
         return settings;
     }
 
-    private static Properties loadProperties() throws Exception {
+    private static Properties loadProperties(Path configFile) throws Exception {
         Properties defaultProps = new Properties();
-        File config = Paths.get(System.getProperty("user.home"), ".fireguard").toFile();
+        File config = configFile.toFile();
         if (!config.exists()) {
-            error(String.format("Config file %s not found", config));
+            error(String.format("Config file %s not found. Run fireguard with no arguments to see the example of it.",
+            		config));
         }
         FileInputStream in = new FileInputStream(config);
         defaultProps.load(in);

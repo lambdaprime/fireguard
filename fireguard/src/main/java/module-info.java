@@ -4,6 +4,7 @@ module id.fireguard {
     
     exports id.jnix.net.dhcpd;
     exports id.jnix.net.iptables;
+    exports id.fireguard to id.fireguard.tests;
     exports id.fireguard.vmm to id.fireguard.tests;
     opens id.fireguard.vmm.vmconfig to com.google.gson;
 }
