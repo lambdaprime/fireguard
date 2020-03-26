@@ -16,39 +16,35 @@ public class VmConfig {
     }
 
     public int getMemoryGb() {
-        return json.machineConfig.memory;
+        return json.getMachineConfig().map(m -> m.memory).orElse(0);
     }
 
     void setMemoryGb(int memoryGb) {
-        json.machineConfig.memory = memoryGb;
+    	json.getMachineConfig().ifPresent(m -> m.memory = memoryGb);
     }
 
     public int getVcpu() {
-        return json.machineConfig.vcpu;
+    	return json.getMachineConfig().map(m -> m.vcpu).orElse(0);
     }
 
     void setVcpu(int vcpu) {
-    	json.machineConfig.vcpu = vcpu;
+    	json.getMachineConfig().ifPresent(m -> m.vcpu = vcpu);
     }
 
     public Optional<String> getHostIface() {
-    	var ifaces = json.networkInterfaces;
-    	if (ifaces.isEmpty()) return Optional.empty();
-        return Optional.of(ifaces.get(0).hostDevName);
+    	return json.getNetworkInterfaces().map(i -> i.get(0).hostDevName);
     }
 
     void setHostIface(String hostIface) {
-    	json.networkInterfaces.get(0).hostDevName = hostIface;
+    	json.getNetworkInterfaces().ifPresent(i -> i.get(0).hostDevName = hostIface);
     }
 
     public Optional<String> getMac() {
-    	var ifaces = json.networkInterfaces;
-    	if (ifaces.isEmpty()) return Optional.empty();
-        return Optional.of(ifaces.get(0).mac);
+    	return json.getNetworkInterfaces().map(i -> i.get(0).mac);
     }
 
     public void setMac(String mac) {
-    	json.networkInterfaces.get(0).mac =  mac;
+    	json.getNetworkInterfaces().ifPresent(i -> i.get(0).mac = mac);
     }
 
     public Path getLocation() {
