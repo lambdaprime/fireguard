@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -16,9 +17,7 @@ import id.xfunction.SmartArgs;
 
 public class FireGuardApp {
 
-    private static LinkedList<String> positionalArgs = new LinkedList<>();
-
-    @SuppressWarnings("resource")
+	@SuppressWarnings("resource")
     private static void usage() throws IOException {
         try (Scanner scanner = new Scanner(FireGuardApp.class.getResource("/README.md").openStream())
                 .useDelimiter("\n")) {
@@ -33,25 +32,37 @@ public class FireGuardApp {
         f.mkdirs();
     }
 
+    private void run(List<String> positionalArgs) throws Exception {
+        var settings = Settings.load();
+        setup(settings.getStage());
+
+        var cmd = positionalArgs.remove(0);
+        switch (cmd) {
+        case "vm": {
+            var pm = VirtualMachinesStore.load(settings.getVmStore());
+            var vmm = VirtualMachineManager.create(settings, pm);
+        	new VmCommand(vmm).execute(positionalArgs);
+        	break;
+        }
+        default: usage();
+        }
+    }
+
     public static void main(String[] args) throws Exception {
         if (args.length < 1) {
             usage();
             exit(1);
         }
 
+        List<String> positionalArgs = new LinkedList<>();
         new SmartArgs(Map.of(), positionalArgs::add)
         	.parse(args);
 
-        var settings = Settings.load();
-        var pm = VirtualMachinesStore.load(settings.getVmStore());
-        setup(settings.getStage());
-
-        var vmm = VirtualMachineManager.create(settings, pm);
-        var cmd = positionalArgs.removeFirst();
-        switch (cmd) {
-        case "vm": new VmCommand(vmm).execute(positionalArgs); break;
-        default: usage();
+        try {
+        	new FireGuardApp().run(positionalArgs);
+        } catch (CommandIllegalArgumentException e) {
+            usage();
+            exit(1);
         }
-
     }
 }

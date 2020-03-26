@@ -2,7 +2,7 @@ package id.fireguard;
 
 import static java.lang.System.out;
 
-import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 
 import id.fireguard.vmm.VirtualMachine;
@@ -62,17 +62,17 @@ public class VmCommand implements Command {
     }
 
     @Override
-    public void execute(LinkedList<String> positionalArgs) throws CommandIllegalArgumentException {
-    	var cmd = positionalArgs.removeFirst();
+    public void execute(List<String> positionalArgs) throws CommandIllegalArgumentException {
+    	var cmd = positionalArgs.remove(0);
         switch (cmd) {
         case "create": create(positionalArgs.stream().findAny()); break;
         case "showAll": showAll(); break;
         case "startAll": startAll(); break;
         case "stopAll": stopAll(); break;
-        case "restart": restart(positionalArgs.getFirst()); break;
+        case "restart": restart(positionalArgs.get(0)); break;
         case "update": update(positionalArgs.get(0), positionalArgs.get(1)); break;
-        case "start": start(positionalArgs.getFirst()); break;
-        case "stop": stop(positionalArgs.getFirst()); break;
+        case "start": start(positionalArgs.get(0)); break;
+        case "stop": stop(positionalArgs.get(0)); break;
         default: throw new CommandIllegalArgumentException();
         }
     }
