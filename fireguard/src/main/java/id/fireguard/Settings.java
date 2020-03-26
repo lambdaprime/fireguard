@@ -29,16 +29,22 @@ public class Settings {
     public static Settings load(Path configFile) throws Exception {
         Properties defaultProps = loadProperties(configFile);
         var settings = new Settings();
-        String store = defaultProps.getProperty("store");
-        XAsserts.assertNotNull(store, "Wrong config file. Property 'store' is missing.");
-        settings.vmStore = Paths.get(store, "vm");
+        var store = getStore(defaultProps.getProperty("store"));
+        settings.vmStore = store.resolve("vm");
         settings.originVm = Paths.get(defaultProps.getProperty("originVm"));
         settings.stage = Paths.get(defaultProps.getProperty("stage"));
         settings.firecracker = Paths.get(defaultProps.getProperty("firecracker"));
         return settings;
     }
 
-    private static Properties loadProperties(Path configFile) throws Exception {
+    private static Path getStore(String store) {
+    	XAsserts.assertNotNull(store, "Wrong config file. Property 'store' is missing.");
+		var path = Paths.get(store);
+		path.toFile().mkdirs();
+		return path;
+	}
+
+	private static Properties loadProperties(Path configFile) throws Exception {
         Properties defaultProps = new Properties();
         File config = configFile.toFile();
         if (!config.exists()) {
