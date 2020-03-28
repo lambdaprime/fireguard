@@ -2,6 +2,7 @@ package id.fireguard.net;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.function.Predicate;
 
 import id.xfunction.ObjectsStore;
 
@@ -14,6 +15,9 @@ public class NetworkStore {
     }
 
     public void add(NetworkEntity entity) {
+    	if (findAll().stream().map(NetworkEntity::getSubnet)
+    			.anyMatch(Predicate.isEqual(entity.getSubnet())))
+    		throw new RuntimeException("Net with such subnet already exist");
         store.add(entity);
     }
 
@@ -29,9 +33,12 @@ public class NetworkStore {
         return store.findAll();
     }
 
-
     public static NetworkStore load(Path store) {
         return new NetworkStore(ObjectsStore.load(store));
+    }
+
+    public static NetworkStore create(ObjectsStore<NetworkEntity> store) {
+        return new NetworkStore(store);
     }
 
     public String nextId() {
@@ -40,7 +47,7 @@ public class NetworkStore {
 
     public NetworkEntity findNet(String netId) {
         return store.findAll().stream()
-                .filter(vm -> vm.id.equals(netId))
+                .filter(net -> net.getId().equals(netId))
                 .findAny().get();
     }
 }
