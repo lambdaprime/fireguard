@@ -11,4 +11,20 @@ public class NetworkEntity implements Serializable {
     InetAddress subnet;
     InetAddress netmask;
 
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+	
+	public String getId() {
+		return id;
+	}
+	
+	public InetAddress getSubnet() {
+		return subnet;
+	}
+	
+	public InetAddress getNetmask() {
+		return netmask;
+	}
+    
 }
