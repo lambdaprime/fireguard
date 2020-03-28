@@ -12,7 +12,7 @@ import id.xfunction.XAsserts;
 
 public class Settings {
 
-	private Path stage, originVm, vmStore, firecracker;
+	private Path stage, originVm, vmStore, netStore, firecracker;
 
 	public Path getStage() {
         return stage;
@@ -31,6 +31,7 @@ public class Settings {
         var settings = new Settings();
         var store = getStore(defaultProps.getProperty("store"));
         settings.vmStore = store.resolve("vm");
+        settings.netStore = store.resolve("net");
         settings.originVm = Paths.get(defaultProps.getProperty("originVm"));
         settings.stage = Paths.get(defaultProps.getProperty("stage"));
         settings.firecracker = Paths.get(defaultProps.getProperty("firecracker"));
@@ -64,4 +65,8 @@ public class Settings {
     public Path getFirecracker() {
         return firecracker;
     }
+
+	public Path getNetStore() {
+		return netStore;
+	}
 }

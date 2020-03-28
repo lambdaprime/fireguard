@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
+import id.fireguard.net.NetworkManager;
+import id.fireguard.net.NetworkStore;
 import id.fireguard.vmm.VirtualMachineManager;
 import id.fireguard.vmm.VirtualMachinesStore;
 import id.xfunction.SmartArgs;
@@ -43,6 +45,11 @@ public class FireGuardApp {
             var vmm = VirtualMachineManager.create(settings, pm);
         	new VmCommand(vmm).execute(positionalArgs);
         	break;
+        }
+        case "net": {
+        	var pm = NetworkStore.load(settings.getNetStore());
+        	var nm = NetworkManager.create(pm);
+        	new NetCommand(nm).execute(positionalArgs); break;
         }
         default: usage();
         }
