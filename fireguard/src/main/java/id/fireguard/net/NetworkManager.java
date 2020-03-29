@@ -2,6 +2,8 @@ package id.fireguard.net;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import id.xfunction.function.Unchecked;
 
@@ -31,4 +33,9 @@ public class NetworkManager {
         return nm;
     }
 
+    public List<Network> findAll() {
+        return manager.findAll().stream()
+                .map(transformer::fromEntity)
+                .collect(Collectors.toList());
+    }
 }

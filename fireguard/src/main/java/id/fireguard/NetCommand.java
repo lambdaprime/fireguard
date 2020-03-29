@@ -24,12 +24,17 @@ public class NetCommand implements Command {
         out.println(net);
     }
 
+	private void showAll() {
+		nm.findAll().forEach(out::println);
+	}
+	
     @Override
     public void execute(List<String> positionalArgs) throws CommandIllegalArgumentException {
     	if (positionalArgs.size() == 0) throw new CommandIllegalArgumentException();
     	var cmd = positionalArgs.remove(0);
         switch (cmd) {
         case "create": create(positionalArgs); break;
+        case "showAll": showAll(); break;
         default: throw new CommandIllegalArgumentException();
         }
     }
