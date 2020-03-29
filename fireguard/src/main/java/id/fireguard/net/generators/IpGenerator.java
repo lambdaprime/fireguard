@@ -14,10 +14,10 @@ public class IpGenerator {
 
 	public Optional<InetAddress> nextIp(Map<InetAddress, Set<InetAddress>> ipPool, InetAddress subnet) {
 		XAsserts.assertTrue(subnet.getAddress()[3] == 0, "Wrong subnet format");
-		return nextIp(subnet, ipPool.getOrDefault(subnet, Set.of()));
+		return newIp(subnet, ipPool.getOrDefault(subnet, Set.of()));
 	}
 
-	private Optional<InetAddress> nextIp(InetAddress subnet, Set<InetAddress> ips) {
+	public Optional<InetAddress> newIp(InetAddress subnet, Set<InetAddress> ips) {
 		var ip = inc(subnet);
 		if (ip.isEmpty()) return Optional.empty();
 		var sorted = ips.stream()
