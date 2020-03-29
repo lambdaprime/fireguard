@@ -3,50 +3,52 @@ package id.fireguard.vmm;
 import static java.util.stream.Collectors.toList;
 
 import java.nio.file.Path;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-import id.xfunction.ObjectsStore;
+import id.xfunction.ObjectStore;
 
 public class VirtualMachinesStore {
 
-    private ObjectsStore<VirtualMachineEntity> store;
+    private ObjectStore<HashSet<VirtualMachineEntity>> store;
+    private HashSet<VirtualMachineEntity> set;
 
-    private VirtualMachinesStore(ObjectsStore<VirtualMachineEntity> store) {
-        this.store = store;
+    public VirtualMachinesStore(Path file) {
+    	this.store = new ObjectStore<>(file);
+    	this.set = store.load().orElse(new HashSet<>());
     }
 
     public void add(VirtualMachineEntity entity) {
-        store.add(entity);
+    	set.add(entity);
+    	save();
     }
 
     public void update(VirtualMachineEntity entity) {
-        store.update(entity);
+    	set.add(entity);
+    	save();
     }
 
     public void save() {
-        store.save();
+        store.save(set);
     }
 
-    public List<VirtualMachineEntity> findAll() {
-        return store.findAll();
+    public Set<VirtualMachineEntity> findAll() {
+        return set;
     }
 
     public List<VirtualMachineEntity> find(State state) {
-        return store.findAll().stream()
+        return set.stream()
                 .filter(e -> e.state == state)
                 .collect(toList());
     }
 
-    public static VirtualMachinesStore load(Path store) {
-        return new VirtualMachinesStore(ObjectsStore.load(store));
-    }
-
     public String nextId() {
-        return "vm-" + (store.findAll().size() + 1);
+        return "vm-" + (set.size() + 1);
     }
 
     public VirtualMachineEntity findVm(String vmId) {
-        return store.findAll().stream()
+        return set.stream()
                 .filter(vm -> vm.id.equals(vmId))
                 .findAny().get();
     }

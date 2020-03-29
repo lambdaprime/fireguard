@@ -41,13 +41,13 @@ public class FireGuardApp {
         var cmd = positionalArgs.remove(0);
         switch (cmd) {
         case "vm": {
-            var pm = VirtualMachinesStore.load(settings.getVmStore());
+            var pm = new VirtualMachinesStore(settings.getVmStore());
             var vmm = VirtualMachineManager.create(settings, pm);
         	new VmCommand(vmm).execute(positionalArgs);
         	break;
         }
         case "net": {
-        	var pm = NetworkStore.load(settings.getNetStore());
+        	var pm = new NetworkStore(settings.getNetStore());
         	var nm = NetworkManager.create(pm);
         	new NetCommand(nm).execute(positionalArgs); break;
         }

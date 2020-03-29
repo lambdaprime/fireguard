@@ -19,7 +19,7 @@ public class VirtualMachinesStoreTest {
     public void test_happy() {
         Path store = Paths.get("/tmp/store" + System.currentTimeMillis());
         System.out.println(store);
-        VirtualMachinesStore pm = VirtualMachinesStore.load(store);
+        VirtualMachinesStore pm = new VirtualMachinesStore(store);
         VirtualMachineEntity entity1 = new VirtualMachineEntity();
         entity1.setHomeFolder("/tmp/lol");
         entity1.setSocket("/tmp/sock");
@@ -32,10 +32,10 @@ public class VirtualMachinesStoreTest {
 
         pm.save();
 
-        pm = VirtualMachinesStore.load(store);
+        pm = new VirtualMachinesStore(store);
         var vms = pm.findAll();
         Assertions.assertEquals(1, vms.size());
         Assertions.assertEquals("id: null\nhome folder: /tmp/lol\nsocket: /tmp/sock\nstate: null\npid: null\n",
-            vms.get(0).toString());
+            vms.stream().findFirst().get().toString());
     }
 }
