@@ -10,4 +10,9 @@ public class NetworkTransformer {
 		return ne;
 	}
 
+	public Network fromEntity(NetworkEntity ne) {
+		var net = new Network(ne.id, ne.subnet, ne.netmask);
+		return net;
+	}
+
 }
