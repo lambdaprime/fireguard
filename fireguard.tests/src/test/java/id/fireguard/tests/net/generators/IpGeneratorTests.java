@@ -1,4 +1,4 @@
-package id.fireguard.tests.net;
+package id.fireguard.tests.net.generators;
 
 import static java.net.InetAddress.getByName;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -12,7 +12,7 @@ import java.util.Set;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import id.fireguard.net.IpGenerator;
+import id.fireguard.net.generators.IpGenerator;
 
 public class IpGeneratorTests extends IpGenerator {
 
