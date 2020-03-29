@@ -4,7 +4,6 @@
 
 package id.fireguard.tests;
 
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -16,7 +15,6 @@ import id.fireguard.CommandIllegalArgumentException;
 import id.fireguard.NetCommand;
 import id.fireguard.net.NetworkManager;
 import id.fireguard.net.NetworkStore;
-import id.xfunction.ObjectsStore;
 
 public class NetCommandTests {
 
@@ -25,8 +23,7 @@ public class NetCommandTests {
 
 	@BeforeEach
 	void setup() {
-		nm = NetworkManager.create(NetworkStore.create(
-				ObjectsStore.create(new HashSet<>())));
+		nm = NetworkManager.create(new NetworkStore(new ObjectStoreMock<>()));
 		nc = new NetCommand(nm);
 	}
 	
