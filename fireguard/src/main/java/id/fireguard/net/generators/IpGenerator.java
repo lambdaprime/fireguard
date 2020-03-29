@@ -1,4 +1,4 @@
-package id.fireguard.net;
+package id.fireguard.net.generators;
 
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
