@@ -44,7 +44,9 @@ FIRECRACKER\_LOCATION -- path to Firecracker
 fireguard <COMMAND>
 ```
 
-COMMAND is one of the following: vm
+COMMAND is one of the following: vm, net
+
+## vm
 
 vm command accepts following arguments:
 
@@ -60,6 +62,13 @@ vm command accepts following arguments:
 Where:
 
 JQ\_EXPRESSION -- it is a jq expression which will be sent to jq together with vm\_config.json. It allows you to change certain VM configuration parameters.
+
+## net
+
+net command accepts following arguments:
+
+- create SUBNET NETMASK -- create a new network with given SUBNET and NETMASK. You cannot have two networks with same SUBNET.
+- attach VM\_ID NETWORK\_ID -- attach virtual machine VM\_ID to the network NETWORK\_ID. You need to restart the VM after so it will join the network.
 
 # Examples
 

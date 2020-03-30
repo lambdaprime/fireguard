@@ -44,7 +44,11 @@ FIRECRACKER\_LOCATION -- path to Firecracker
 fireguard <COMMAND>
 ```
 
-COMMAND is one of the following:
+COMMAND is one of the following: vm, net
+
+## vm
+
+vm command accepts following arguments:
 
 - create [JQ\_EXPRESSION] -- create a new VM by copying ORIGIN to a STAGE. If JQ_EXPRESSION is given then update its vm\_config.json with accordance to it.
 - showAll -- show information about all available VMs
@@ -58,6 +62,13 @@ COMMAND is one of the following:
 Where:
 
 JQ\_EXPRESSION -- it is a jq expression which will be sent to jq together with vm\_config.json. It allows you to change certain VM configuration parameters.
+
+## net
+
+net command accepts following arguments:
+
+- create SUBNET NETMASK -- create a new network with given SUBNET and NETMASK. You cannot have two networks with same SUBNET.
+- attach VM\_ID NETWORK\_ID -- attach virtual machine VM\_ID to the network NETWORK\_ID. You need to restart the VM after so it will join the network.
 
 # Examples
 
@@ -75,7 +86,7 @@ firecracker = /home/ubuntu/opt/firecracker/firecracker-v0.20.0-x86_64
 Create new VM:
 
 ```bash 
-% fireguard create '."network-interfaces"[0].guest_mac = "AA:FC:00:00:00:01" | ."network-interfaces"[0].host_dev_name = "tap1"'
+% fireguard vm create '."network-interfaces"[0].guest_mac = "AA:FC:00:00:00:01" | ."network-interfaces"[0].host_dev_name = "tap1"'
 Creating new VM...
 id: vm-1
 home folder: /home/ubuntu/vms/stage/vm-1
@@ -93,7 +104,7 @@ mac: Optional.empty
 Start a VM:
 
 ```bash
-% fireguard start vm-1
+% fireguard vm start vm-1
 Starting VM with id vm-1...
 %
 ```
@@ -101,7 +112,7 @@ Starting VM with id vm-1...
 Show all available VMs:
 
 ```bash
-% fireguard showAll   
+% fireguard vm showAll   
 id: vm-2
 home folder: /home/ubuntu/vms/stage/vm-2
 socket: /home/ubuntu/vms/stage/vm-2/firecracker.sock
@@ -130,7 +141,7 @@ mac: Optional.empty
 Start all VMs:
  
 ```bash
-% fireguard startAll  
+% fireguard vm startAll  
 Starting VM with id vm-2...
 Starting VM with id vm-1...
 %
@@ -139,7 +150,7 @@ Starting VM with id vm-1...
 Restart VM:
  
 ```bash
-% fireguard restart vm-1
+% fireguard vm restart vm-1
 Stopping VM with id vm-1...
 Starting VM with id vm-1...
 %
