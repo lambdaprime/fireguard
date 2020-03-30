@@ -1,6 +1,7 @@
 package id.fireguard.net;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.StringJoiner;
 
 import id.xfunction.XAsserts;
@@ -45,6 +46,26 @@ public class MacAddress implements Serializable {
 		return new MacAddress(v);
 	}
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (this == obj) {
+            return true;
+        }
+        if (this.getClass() != obj.getClass()) {
+            return false;
+        }
+        MacAddress r = (MacAddress) obj;
+        return Objects.equals(value, r.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(value);
+    }
+    
 	@Override
 	public String toString() {
 		var sj = new StringJoiner(":");
