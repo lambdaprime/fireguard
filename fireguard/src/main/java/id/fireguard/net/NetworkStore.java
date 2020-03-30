@@ -2,6 +2,7 @@ package id.fireguard.net;
 
 import java.nio.file.Path;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -30,6 +31,7 @@ public class NetworkStore {
     }
 
     public void update(NetworkEntity entity) {
+    	set.remove(entity);
     	set.add(entity);
     	save();
     }
@@ -46,9 +48,9 @@ public class NetworkStore {
         return "net-" + (set.size() + 1);
     }
 
-    public NetworkEntity findNet(String netId) {
+    public Optional<NetworkEntity> findNet(String netId) {
         return set.stream()
                 .filter(net -> net.getId().equals(netId))
-                .findAny().get();
+                .findAny();
     }
 }
