@@ -14,16 +14,26 @@ import org.junit.jupiter.api.Test;
 import id.fireguard.CommandIllegalArgumentException;
 import id.fireguard.NetCommand;
 import id.fireguard.net.NetworkManager;
+import id.fireguard.net.NetworkManagerConfig;
 import id.fireguard.net.NetworkStore;
+import id.fireguard.net.NetworkTransformer;
 
 public class NetCommandTests {
 
 	private NetCommand nc;
 	private NetworkManager nm;
 
+	static class NetworkManagerMock extends NetworkManager {
+		protected NetworkManagerMock() {
+			super(new NetworkManagerConfig(),
+					new NetworkStore(new ObjectStoreMock<>()),
+					new NetworkTransformer());
+		}
+	}
+	
 	@BeforeEach
 	void setup() {
-		nm = NetworkManager.create(new NetworkStore(new ObjectStoreMock<>()));
+		nm = new NetworkManagerMock();
 		nc = new NetCommand(nm);
 	}
 	
@@ -43,7 +53,7 @@ public class NetCommandTests {
     @Test
     public void test_create_uniq_subnets() throws Exception {
     	List<String> args = List.of(
-    			"create", "10.1.1.1", "255.255.0.0");
+    			"create", "10.1.1.0", "255.255.0.0");
 		nc.execute(new LinkedList<>(args));
 		Assertions.assertThrows(RuntimeException.class,
 				() -> nc.execute(new LinkedList<>(args)));
