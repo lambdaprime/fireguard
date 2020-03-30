@@ -13,15 +13,19 @@ public class VirtualMachine {
     private State state;
     private Path home, socket;
     private VmConfig vmConfig;
-    private Optional<Long> pid;
+    private Optional<Long> pid = Optional.empty();
 
-    public VirtualMachine(String id, State state, Path home, Path socket, VmConfig vmConfig, Optional<Long> pid) {
+    public VirtualMachine(String id, State state, Path home, Path socket, VmConfig vmConfig) {
         this.id = id;
         this.state = state;
         this.home = home;
         this.socket = socket;
         this.vmConfig = vmConfig;
-        this.pid = pid;
+    }
+
+    public VirtualMachine withPid(Long pid) {
+    	this.pid = Optional.of(pid);
+    	return this;
     }
 
     public Path getHome() {

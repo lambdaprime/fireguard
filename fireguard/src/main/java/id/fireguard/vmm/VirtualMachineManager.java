@@ -41,7 +41,7 @@ public class VirtualMachineManager {
             throw new RuntimeException(e);
         }
         jqExpr.ifPresent(jqexp -> configUtils.update(home, jqexp));
-        VirtualMachine vm = builder.build(id, State.STOPPED, home, socket, Optional.empty());
+        VirtualMachine vm = builder.build(id, State.STOPPED, home, socket);
         manager.add(asVirtualMachineEntity(vm));
         return vm;
     }
