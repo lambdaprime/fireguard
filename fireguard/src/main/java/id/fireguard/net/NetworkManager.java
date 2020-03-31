@@ -27,13 +27,19 @@ public class NetworkManager {
 	}
 
     private Network createUnsafe(String subnet, String netmask) throws UnknownHostException {
-        var id = networkStore.nextId();
+        var id = nextNetId();
         Network net = new Network(id, InetAddress.getByName(subnet), InetAddress.getByName(netmask));
         networkStore.add(transformer.toEntity(net));
         return net;
 	}
 
-    public List<Network> findAll() {
+    private String nextNetId() {
+    	var id = config.getLastId() + 1;
+    	config.setLastId(id);
+    	return "net-" + id;
+	}
+
+	public List<Network> findAll() {
         return networkStore.findAll().stream()
                 .map(transformer::fromEntity)
                 .collect(Collectors.toList());

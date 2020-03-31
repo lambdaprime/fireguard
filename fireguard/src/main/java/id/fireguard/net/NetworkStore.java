@@ -44,10 +44,6 @@ public class NetworkStore {
         return set;
     }
 
-    public String nextId() {
-        return "net-" + (set.size() + 1);
-    }
-
     public Optional<NetworkEntity> findNet(String netId) {
         return set.stream()
                 .filter(net -> net.getId().equals(netId))
