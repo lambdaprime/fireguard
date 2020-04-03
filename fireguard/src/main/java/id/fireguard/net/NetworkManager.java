@@ -53,7 +53,7 @@ public class NetworkManager {
 		Set<InetAddress> ipPool = net.getInterfaces().stream()
 				.map(NetworkInterface::getIp)
 				.collect(Collectors.toSet());
-		var ip = new IpGenerator().newIp(net.getSubnet(), ipPool);
+		var ip = new IpGenerator(ipPool).newIp(net.getSubnet());
 		ip.orElseThrow(() -> new RuntimeException("Error generating new ip"));
 		var mac = config.getLastUsedMacAddr().inc();
 		config.setLastUsedMacAddr(mac);

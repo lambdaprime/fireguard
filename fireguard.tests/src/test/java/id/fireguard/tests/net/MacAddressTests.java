@@ -5,9 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
 import id.fireguard.net.MacAddress;
-import id.fireguard.net.generators.IpGenerator;
 
-public class MacAddressTests extends IpGenerator {
+public class MacAddressTests {
 
     @Test
     public void test_toString() throws Exception {

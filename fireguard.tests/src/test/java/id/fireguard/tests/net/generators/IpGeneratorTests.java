@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.InetAddress;
-import java.util.Map;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.Assertions;
@@ -16,7 +16,11 @@ import id.fireguard.net.generators.IpGenerator;
 
 public class IpGeneratorTests extends IpGenerator {
 
-    @Test
+    public IpGeneratorTests() {
+		super(Set.of());
+	}
+
+	@Test
     public void test_inc() throws Exception {
     	String actual = inc(getByName("123.2.3.0")).get().toString();
 		assertEquals("/123.2.3.1", actual);
@@ -47,39 +51,42 @@ public class IpGeneratorTests extends IpGenerator {
 
     @Test
     public void test_nextIp_from_1() throws Exception {
-    	Map<InetAddress, Set<InetAddress>> ipPool = Map.of(
-    			getByName("123.2.3.0"), Set.of(getByName("123.2.3.254")));
-    	var actual = nextIp(ipPool, getByName("123.2.3.0")).get().toString();
+    	Set<InetAddress> ipPool = Set.of(getByName("123.2.3.254"));
+    	var actual = new IpGenerator(ipPool).newIp(getByName("123.2.3.0")).get().toString();
     	assertEquals("/123.2.3.1", actual);
     }
 
     @Test
-    public void test_nextIp_wrong_subnet() throws Exception {
-    	Map<InetAddress, Set<InetAddress>> ipPool = Map.of(
-    			getByName("123.2.3.0"), Set.of(getByName("123.2.3.254")));
-    	Assertions.assertThrows(AssertionError.class,
-				() -> nextIp(ipPool, getByName("123.2.3.12")));
-    }
-
-    @Test
     public void test_nextIp_after_1() throws Exception {
-    	Map<InetAddress, Set<InetAddress>> ipPool = Map.of(
-    			getByName("123.2.3.0"), Set.of(
+    	Set<InetAddress> ipPool = Set.of(
     					getByName("123.2.3.1"),
-    					getByName("123.2.3.254")));
-    	var actual = nextIp(ipPool, getByName("123.2.3.0")).get().toString();
+    					getByName("123.2.3.254"));
+    	var actual = new IpGenerator(ipPool).newIp(getByName("123.2.3.0")).get().toString();
     	assertEquals("/123.2.3.2", actual);
     }
 
     @Test
     public void test_nextIp_consecutive() throws Exception {
-    	Map<InetAddress, Set<InetAddress>> ipPool = Map.of(
-    			getByName("123.2.3.0"), Set.of(
+    	Set<InetAddress> ipPool = Set.of(
     					getByName("123.2.3.4"),
     					getByName("123.2.3.3"),
     					getByName("123.2.3.2"),
-    					getByName("123.2.3.1")));
-    	var actual = nextIp(ipPool, getByName("123.2.3.0")).get().toString();
+    					getByName("123.2.3.1"));
+    	var actual = new IpGenerator(ipPool).newIp(getByName("123.2.3.0")).get().toString();
     	assertEquals("/123.2.3.5", actual);
+    }
+    
+    @Test
+    public void test_nextIp_multiple_calls() throws Exception {
+    	Set<InetAddress> ipPool = Set.of(
+    					getByName("123.2.3.4"),
+    					getByName("123.2.3.3"),
+    					getByName("123.2.3.2"),
+    					getByName("123.2.3.1"));
+    	var generator = new IpGenerator(ipPool);
+    	var actual = List.of(
+    			generator.newIp(getByName("123.2.3.0")).get().toString(),
+    			generator.newIp(getByName("123.2.3.0")).get().toString());
+    	assertEquals("[/123.2.3.5, /123.2.3.6]", actual.toString());
     }
 }
