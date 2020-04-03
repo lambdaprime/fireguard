@@ -2,22 +2,22 @@ package id.fireguard.net.generators;
 
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
-import java.util.Map;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import id.xfunction.XAsserts;
 import id.xfunction.function.Unchecked;
 
 public class IpGenerator {
 
-	public Optional<InetAddress> nextIp(Map<InetAddress, Set<InetAddress>> ipPool, InetAddress subnet) {
-		XAsserts.assertTrue(subnet.getAddress()[3] == 0, "Wrong subnet format");
-		return newIp(subnet, ipPool.getOrDefault(subnet, Set.of()));
+	private Set<InetAddress> ips;
+	
+	public IpGenerator(Set<InetAddress> ips) {
+		this.ips = new HashSet<>(ips);
 	}
 
-	public Optional<InetAddress> newIp(InetAddress subnet, Set<InetAddress> ips) {
+	public Optional<InetAddress> newIp(InetAddress subnet) {
 		var ip = inc(subnet);
 		if (ip.isEmpty()) return Optional.empty();
 		var sorted = ips.stream()
@@ -25,13 +25,14 @@ public class IpGenerator {
 			.collect(Collectors.toList());
 		var iter = sorted.iterator();
 		while (iter.hasNext()) {
-			if (!ip.get().equals(iter.next())) return ip;
+			if (!ip.get().equals(iter.next())) break;
 			ip = inc(ip.get());
 			if (ip.isEmpty()) return Optional.empty();
 		}
 		if (!valid(subnet, ip.get())) {
 			return Optional.empty();
 		}
+		ips.add(ip.get());
 		return ip;
 	}
 	
