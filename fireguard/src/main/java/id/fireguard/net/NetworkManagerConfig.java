@@ -26,6 +26,7 @@ public class NetworkManagerConfig extends XObservable<NetworkManagerConfig> impl
 
 	public void setLastId(int lastId) {
 		this.lastId = lastId;
+		notifyAll(this);
 	}
 	
 }
