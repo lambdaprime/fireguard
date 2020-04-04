@@ -8,11 +8,21 @@ public class NetworkInterfaceEntity implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	InetAddress ip;
+	String vmId;
+	InetAddress hostIp;
+	InetAddress vmIp;
     MacAddress macAddress;
     
-    public InetAddress getIp() {
-		return ip;
+    public String getVmId() {
+		return vmId;
+	}
+    
+    public InetAddress getHostIp() {
+		return hostIp;
+	}
+    
+    public InetAddress getVmIp() {
+		return vmIp;
 	}
     
 	public MacAddress getMac() {
@@ -31,12 +41,11 @@ public class NetworkInterfaceEntity implements Serializable {
             return false;
         }
         NetworkInterfaceEntity r = (NetworkInterfaceEntity) obj;
-        return Objects.equals(ip, r.ip)
-        		&& Objects.equals(macAddress, r.macAddress);
+        return Objects.equals(macAddress, r.macAddress);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(ip, macAddress);
+        return Objects.hash(macAddress);
     }
 }
