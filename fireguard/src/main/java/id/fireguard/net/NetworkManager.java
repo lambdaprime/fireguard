@@ -5,6 +5,7 @@ import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.Set;
 
 import id.fireguard.net.generators.IpGenerator;
@@ -51,17 +52,25 @@ public class NetworkManager {
 			throw new RuntimeException("Network with id " + netId + " not found");
 		var net = netOpt.get();
 		Set<InetAddress> ipPool = net.getInterfaces().stream()
-				.map(NetworkInterface::getIp)
+				.flatMap(ni -> Stream.of(ni.getHostIp(), ni.getVmIp()))
 				.collect(Collectors.toSet());
-		var ip = new IpGenerator(ipPool).newIp(net.getSubnet());
-		ip.orElseThrow(() -> new RuntimeException("Error generating new ip"));
+		var name = vmId;
+		var ipGen = new IpGenerator(ipPool);
+		var hostIp = nextIp(ipGen, net.getSubnet());
+		var vmIp = nextIp(ipGen, net.getSubnet());
 		var mac = config.getLastUsedMacAddr().inc();
 		config.setLastUsedMacAddr(mac);
-		net.getInterfaces().add(new NetworkInterface(ip.get(), mac));
+		net.getInterfaces().add(new NetworkInterface(name, hostIp, vmIp, mac));
 		networkStore.update(transformer.toEntity(net));
 	}
 
-    public Optional<Network> find(String netId) {
+    private InetAddress nextIp(IpGenerator ipGen, InetAddress subnet) {
+    	var ip = ipGen.newIp(subnet);
+		ip.orElseThrow(() -> new RuntimeException("Error generating new ip"));
+		return ip.get();
+	}
+
+	public Optional<Network> find(String netId) {
     	return networkStore.findNet(netId)
     			.map(transformer::fromEntity);
     }
