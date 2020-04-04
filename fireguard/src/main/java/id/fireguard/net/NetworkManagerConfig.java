@@ -17,7 +17,7 @@ public class NetworkManagerConfig extends XObservable<NetworkManagerConfig> impl
 
 	public void setLastUsedMacAddr(MacAddress lastUsedMacAddr) {
 		this.lastUsedMacAddr = lastUsedMacAddr;
-		notifyAll(this);
+		updateAll(this);
 	}
 
 	public int getLastId() {
@@ -26,7 +26,7 @@ public class NetworkManagerConfig extends XObservable<NetworkManagerConfig> impl
 
 	public void setLastId(int lastId) {
 		this.lastId = lastId;
-		notifyAll(this);
+		updateAll(this);
 	}
 	
 }
