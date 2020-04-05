@@ -1,13 +1,28 @@
 package id.fireguard.vmm.vmconfig;
 
-import com.google.gson.annotations.SerializedName;
-
 public class MachineConfig {
 
-	@SerializedName("vcpu_count")
-	int vcpu;
-
-	@SerializedName("mem_size_mib")
-	int memory;
-
+	private int vcpu;
+	private int memory;
+	
+	public MachineConfig(int vcpu, int memory) {
+		this.vcpu = vcpu;
+		this.memory = memory;
+	}
+	
+	public int getMemory() {
+		return memory;
+	}
+	
+	public int getVcpu() {
+		return vcpu;
+	}
+	
+	public void setMemory(int memory) {
+		this.memory = memory;
+	}
+	
+	public void setVcpu(int vcpu) {
+		this.vcpu = vcpu;
+	}
 }

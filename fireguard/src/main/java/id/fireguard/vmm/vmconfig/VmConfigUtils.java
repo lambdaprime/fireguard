@@ -9,7 +9,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import id.xfunction.XExec;
+import id.jnix.Jq;
 import id.xfunction.XProcess;
 
 public class VmConfigUtils {
@@ -34,16 +34,14 @@ public class VmConfigUtils {
     public void update(Path vmHome, String jqExpr) {
         Path vmConfigPath = vmHome.resolve(VM_CONFIG_JSON);
         try {
-            var json = readFromFile(vmConfigPath);
-            XProcess result = new XExec("jq", jqExpr)
-                    .withInput(Files.readAllLines(vmConfigPath).stream())
-                    .run();
-            if (result.code().get() != 0) {
-                var msg = asString(result.stderr());
-                throw new RuntimeException(msg);
-            }
-            json = asString(result.stdout());
-            writeToFile(vmConfigPath, json);
+        	var proc = new XProcess(new Jq().withFile(vmConfigPath)
+            		.withFilter(jqExpr)
+            		.withInplaceMode()
+            		.run());
+        	var ret = proc.code().get();
+        	if (ret != 0) {
+        		throw new RuntimeException(proc.stderrAsString());
+        	}
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
