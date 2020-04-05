@@ -10,9 +10,17 @@ import id.xfunction.function.Unchecked;
 
 public class IpTables {
 
+	private boolean withSudo;
+
+	public IpTables withSudo() {
+		this.withSudo = true;
+		return this;
+	}
+
 	public void add(Rule rule) {
 		var cmd = new StringJoiner(" ");
-		cmd.add("sudo");
+		if (withSudo)
+			cmd.add("sudo");
 		cmd.add("iptables");
 		rule.table.ifPresent(t -> {
 			cmd.add("-t " + t);
