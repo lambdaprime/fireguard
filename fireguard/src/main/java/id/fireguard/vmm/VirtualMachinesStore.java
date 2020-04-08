@@ -5,6 +5,7 @@ import static java.util.stream.Collectors.toList;
 import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import id.xfunction.ObjectStore;
@@ -47,9 +48,9 @@ public class VirtualMachinesStore {
         return "vm-" + (set.size() + 1);
     }
 
-    public VirtualMachineEntity findVm(String vmId) {
+    public Optional<VirtualMachineEntity> findVm(String vmId) {
         return set.stream()
                 .filter(vm -> vm.id.equals(vmId))
-                .findAny().get();
+                .findAny();
     }
 }
