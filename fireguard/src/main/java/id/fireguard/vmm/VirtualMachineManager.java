@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import id.fireguard.Settings;
@@ -47,7 +48,8 @@ public class VirtualMachineManager {
     }
 
     public VirtualMachine find(String vmId) {
-        return asVirtualMachine(manager.findVm(vmId));
+    	Supplier<RuntimeException> supply = () -> new RuntimeException("Not found vm with id " + vmId);
+        return asVirtualMachine(manager.findVm(vmId).orElseThrow(supply));
     }
 
     public List<VirtualMachine> findAll() {
