@@ -22,7 +22,7 @@ public class NetworkTransformer {
 	}
 
 	public NetworkInterface fromEntity(NetworkInterfaceEntity ne) {
-		var iface = new NetworkInterface(ne.getVmId(), ne.getHostIp(),
+		var iface = new NetworkInterface(ne.getName(), ne.getVmId(), ne.getHostIp(),
 				ne.getVmIp(), ne.getMac());
 		return iface;
 	}

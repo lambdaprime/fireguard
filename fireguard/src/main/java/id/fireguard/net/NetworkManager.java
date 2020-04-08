@@ -7,8 +7,10 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import id.fireguard.net.generators.IpGenerator;
+import id.xfunction.XObservable;
 import id.xfunction.function.Unchecked;
 
 public class NetworkManager {
@@ -16,6 +18,7 @@ public class NetworkManager {
     private NetworkStore networkStore;
     private NetworkTransformer transformer;
     private NetworkManagerConfig config;
+    private XObservable<NetworkInterface> onAttach = new XObservable<>();
 
     protected NetworkManager(NetworkManagerConfig config, NetworkStore networkStore, NetworkTransformer transformer) {
         this.networkStore = networkStore;
@@ -54,16 +57,22 @@ public class NetworkManager {
 		Set<InetAddress> ipPool = net.getInterfaces().stream()
 				.flatMap(ni -> Stream.of(ni.getHostIp(), ni.getVmIp()))
 				.collect(Collectors.toSet());
-		var name = vmId;
+		var name = netId + vmId;
 		var ipGen = new IpGenerator(ipPool);
 		var hostIp = nextIp(ipGen, net.getSubnet());
 		var vmIp = nextIp(ipGen, net.getSubnet());
 		var mac = config.getLastUsedMacAddr().inc();
+		NetworkInterface iface = new NetworkInterface(name, vmId, hostIp, vmIp, mac);
+		onAttach.updateAll(iface);
 		config.setLastUsedMacAddr(mac);
-		net.getInterfaces().add(new NetworkInterface(name, hostIp, vmIp, mac));
+		net.getInterfaces().add(iface);
 		networkStore.update(transformer.toEntity(net));
 	}
 
+	public void onAttach(Consumer<NetworkInterface> listener) {
+		onAttach.addListener(listener);
+	}
+	
     private InetAddress nextIp(IpGenerator ipGen, InetAddress subnet) {
     	var ip = ipGen.newIp(subnet);
 		ip.orElseThrow(() -> new RuntimeException("Error generating new ip"));
@@ -74,4 +83,5 @@ public class NetworkManager {
     	return networkStore.findNet(netId)
     			.map(transformer::fromEntity);
     }
+
 }

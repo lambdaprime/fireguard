@@ -11,6 +11,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import id.fireguard.Settings;
+import id.fireguard.net.NetworkInterface;
 import id.fireguard.vmm.vmconfig.VmConfigUtils;
 import id.xfunction.function.Unchecked;
 
@@ -172,4 +173,9 @@ public class VirtualMachineManager {
         Unchecked.run(() -> ph.onExit().get());
     }
 
+	public void onAttach(NetworkInterface iface) {
+		var vmConfig = find(iface.getVmId()).getVmConfig();
+		vmConfig.setIface("eth0", iface.getName(), iface.getMac().toString());
+		configUtils.save(vmConfig);
+	}
 }

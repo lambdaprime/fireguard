@@ -10,16 +10,22 @@ import java.net.InetAddress;
  */
 public class NetworkInterface {
 
+	private String name;
 	private String vmId;
 	private InetAddress hostIp;
 	private InetAddress vmIp;
 	private MacAddress macAddress;
     
-	public NetworkInterface(String vmId, InetAddress hostIp, InetAddress vmIp, MacAddress macAddress) {
+	public NetworkInterface(String name, String vmId, InetAddress hostIp, InetAddress vmIp, MacAddress macAddress) {
+		this.name = name;
 		this.vmId = vmId;
 		this.hostIp = hostIp;
 		this.vmIp = vmIp;
 		this.macAddress = macAddress;
+	}
+
+	public String getName() {
+		return name;
 	}
 	
     public InetAddress getVmIp() {
@@ -40,7 +46,7 @@ public class NetworkInterface {
 	
     @Override
     public String toString() {
-        return format("{ vmId: %s, hostIp: %s, vmIp: %s, macAddress: %s }",
-        		vmId, hostIp, vmIp, macAddress);
+        return format("{ name: %s, vmId: %s, hostIp: %s, vmIp: %s, macAddress: %s }",
+        		name, vmId, hostIp, vmIp, macAddress);
     }
 }

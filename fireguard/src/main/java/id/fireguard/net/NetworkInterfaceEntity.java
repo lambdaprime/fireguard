@@ -8,6 +8,7 @@ public class NetworkInterfaceEntity implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
+	String name;
 	String vmId;
 	InetAddress hostIp;
 	InetAddress vmIp;
@@ -29,6 +30,14 @@ public class NetworkInterfaceEntity implements Serializable {
 		return macAddress;
 	}
 
+	public String getName() {
+		return name;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
+	}
+	
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
