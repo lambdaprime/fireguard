@@ -11,17 +11,17 @@ import java.util.stream.Stream;
 
 import id.xfunction.XAsserts;
 import id.xfunction.XExec;
-import id.xfunction.function.Unchecked;
+import id.xfunction.XProcess;
 
 /**
  * Provides an access to jq (Command-line JSON processor) and
+ * <ul>
+ * <li>allows to pass JSON (or anything else) as an input
+ * to jq directly (no need to save it to the file)</li>
  * 
- * - allows to pass JSON (or anything else) as an input
- * to jq directly (no need to save it to the file)
- * 
- * - supports inplace replace in the files (currently jq does
- * not allow that)
- * 
+ * <li>supports inplace replace in the files (currently jq does
+ * not allow that)</li>
+ * </ul>
  */
 public class Jq {
 
@@ -62,7 +62,16 @@ public class Jq {
 		this.fileOpt = Optional.of(file);
 		return this;
 	}
-	
+
+	/**
+	 * This makes an async call to jq and returns the Process to it.
+	 * 
+	 * <p>With inplace mode this call will be sync and will block until
+	 * jq will not finish. This is because in inplace we need to
+	 * replace the file at the end. Making it async will cause
+	 * racing problems when you do many inplace changes on the same
+	 * file.</p>
+	 */
 	public Process run() throws Exception {
 		if (withInplace) {
 			XAsserts.assertTrue(fileOpt.isPresent(), "Inplace mode requires file to be set");
@@ -85,10 +94,10 @@ public class Jq {
 	        var tmpFile = Files.createTempFile(file.getFileName().toString(), "");
 	        proc.getInputStream().transferTo(
 	        		Files.newOutputStream(tmpFile, StandardOpenOption.WRITE));
-	        proc.onExit().thenAccept(
-	        		Unchecked.wrapAccept(c -> {
-	        			if (proc.exitValue() == 0) Files.move(tmpFile, file, StandardCopyOption.REPLACE_EXISTING);
-	        }));
+	        if (new XProcess(proc).code().get() == 0) 
+	        	Files.move(tmpFile, file, StandardCopyOption.REPLACE_EXISTING);
+	        else
+	        	Files.delete(tmpFile);
         }
         return proc;
 	}
