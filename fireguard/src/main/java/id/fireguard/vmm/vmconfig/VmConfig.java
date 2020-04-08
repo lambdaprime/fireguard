@@ -3,6 +3,7 @@ package id.fireguard.vmm.vmconfig;
 import static java.lang.String.format;
 
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Optional;
 
 public class VmConfig {
@@ -37,36 +38,38 @@ public class VmConfig {
     			.map(i -> i.getHostDevName());
     }
 
-    void setHostIface(String hostIface) {
-    	json.getNetworkInterfaces().stream()
-    		.findFirst()
-    		.ifPresent(i -> i.setHostDevName(hostIface));
-    }
-
     public Optional<String> getMac() {
     	return json.getNetworkInterfaces().stream()
     			.findFirst()
     			.map(i -> i.getMac());
     }
 
-    public void setMac(String mac) {
-    	json.getNetworkInterfaces().stream()
-    		.findFirst()
-    		.ifPresent(i -> i.setMac(mac));
-    }
-
     public Path getLocation() {
         return location;
     }
 
-    @Override
-    public String toString() {
-        var sb = new StringBuilder();
-        sb.append(format("path: %s\n", location.toString()));
-        sb.append(format("memoryGb: %s\n", getMemoryGb()));
-        sb.append(format("vcpu: %s\n", getVcpu()));
-        sb.append(format("hostIface: %s\n", getHostIface()));
-        sb.append(format("mac: %s\n", getMac()));
-        return sb.toString();
-    }
+    public VmConfigJson getVmConfigJson() {
+		return json;
+	}
+
+	public void setIface(String vmIface, String hostIface, String mac) {
+    	List<NetworkIface> ifaces = json.getNetworkInterfaces();
+		ifaces.stream()
+    		.findFirst()
+    		.ifPresentOrElse(i -> {
+    			i.setMac(mac);
+    			i.setHostDevName(hostIface);
+    		}, () -> ifaces.add(new NetworkIface(vmIface, mac, hostIface)));
+	}
+
+	@Override
+	public String toString() {
+		var sb = new StringBuilder();
+		sb.append(format("path: %s\n", location.toString()));
+		sb.append(format("memoryGb: %s\n", getMemoryGb()));
+		sb.append(format("vcpu: %s\n", getVcpu()));
+		sb.append(format("hostIface: %s\n", getHostIface()));
+		sb.append(format("mac: %s\n", getMac()));
+		return sb.toString();
+	}
 }

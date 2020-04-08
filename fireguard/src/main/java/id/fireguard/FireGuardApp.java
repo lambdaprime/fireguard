@@ -40,20 +40,24 @@ public class FireGuardApp {
         var cmd = positionalArgs.remove(0);
         switch (cmd) {
         case "vm": {
-            var pm = new VirtualMachinesStore(settings.getVmStore());
-            var vmm = VirtualMachineManager.create(settings, pm);
-        	new VmCommand(vmm).execute(positionalArgs);
+        	new VmCommand(createVmm(settings)).execute(positionalArgs);
         	break;
         }
         case "net": {
         	var nm = new NetworkManagerBuilder(settings).create();
+        	nm.onAttach(createVmm(settings)::onAttach);
         	new NetCommand(nm).execute(positionalArgs); break;
         }
         default: usage();
         }
     }
 
-    public static void main(String[] args) throws Exception {
+    private VirtualMachineManager createVmm(Settings settings) {
+    	var pm = new VirtualMachinesStore(settings.getVmStore());
+        return VirtualMachineManager.create(settings, pm);
+	}
+
+	public static void main(String[] args) throws Exception {
         if (args.length < 1) {
             usage();
             exit(1);
