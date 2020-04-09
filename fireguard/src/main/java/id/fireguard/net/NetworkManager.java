@@ -38,11 +38,17 @@ public class NetworkManager {
 	}
 
     private String nextNetId() {
-    	var id = config.getLastId() + 1;
-    	config.setLastId(id);
+    	var id = config.getLastNetId() + 1;
+    	config.setLastNetId(id);
     	return "net-" + id;
 	}
 
+    private String nextIfaceId() {
+    	var id = config.getLastIfaceId() + 1;
+    	config.setLastIfaceId(id);
+    	return "tap" + id;
+	}
+    
 	public List<Network> findAll() {
         return networkStore.findAll().stream()
                 .map(transformer::fromEntity)
@@ -57,7 +63,7 @@ public class NetworkManager {
 		Set<InetAddress> ipPool = net.getInterfaces().stream()
 				.flatMap(ni -> Stream.of(ni.getHostIp(), ni.getVmIp()))
 				.collect(Collectors.toSet());
-		var name = netId + vmId;
+		var name = nextIfaceId();
 		var ipGen = new IpGenerator(ipPool);
 		var hostIp = nextIp(ipGen, net.getSubnet());
 		var vmIp = nextIp(ipGen, net.getSubnet());

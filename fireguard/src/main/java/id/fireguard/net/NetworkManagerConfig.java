@@ -8,7 +8,8 @@ public class NetworkManagerConfig extends XObservable<NetworkManagerConfig> impl
 
 	private static final long serialVersionUID = 1L;
 
-	private int lastId;
+	private int lastNetId;
+	private int lastIfaceId;
 	private MacAddress lastUsedMacAddr  = new MacAddress(0);
 
 	public MacAddress getLastUsedMacAddr() {
@@ -20,13 +21,20 @@ public class NetworkManagerConfig extends XObservable<NetworkManagerConfig> impl
 		updateAll(this);
 	}
 
-	public int getLastId() {
-		return lastId;
+	public int getLastNetId() {
+		return lastNetId;
 	}
 
-	public void setLastId(int lastId) {
-		this.lastId = lastId;
+	public void setLastNetId(int lastId) {
+		this.lastNetId = lastId;
 		updateAll(this);
 	}
 	
+	public int getLastIfaceId() {
+		return lastIfaceId;
+	}
+	
+	public void setLastIfaceId(int lastIfaceId) {
+		this.lastIfaceId = lastIfaceId;
+	}
 }

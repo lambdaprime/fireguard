@@ -20,7 +20,7 @@ public class NetworkManagerConfigTests {
     	nmc.addListener(val -> {
     		isNotified[0] = true;
     	});
-    	nmc.setLastId(12);
+    	nmc.setLastNetId(12);
     	Assertions.assertTrue(isNotified[0]);
     }
 
