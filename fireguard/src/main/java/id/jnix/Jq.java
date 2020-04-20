@@ -93,7 +93,7 @@ public class Jq {
         cmd.add(filter);
         if (fileOpt.isPresent())
             cmd.add(fileOpt.get().toString());
-        var pb = new XExec(cmd.toArray(new String[0]));
+        var pb = new XExec(cmd);
         if (inputOpt.isPresent())
             pb.withInput(inputOpt.get());
         var proc = pb.run().process();
