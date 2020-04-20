@@ -10,6 +10,7 @@ module id.fireguard {
     requires com.google.gson;
 
     exports id.jnix;
+    exports id.jnix.net.ip;
     exports id.jnix.net.dhcpd;
     exports id.jnix.net.iptables;
     exports id.fireguard to id.fireguard.tests;
