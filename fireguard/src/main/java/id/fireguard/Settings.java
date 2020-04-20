@@ -7,7 +7,7 @@
  */
 package id.fireguard;
 
-import static id.xfunction.XUtils.error;
+import static id.xfunction.XUtils.throwRuntime;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -58,8 +58,8 @@ public class Settings {
         Properties defaultProps = new Properties();
         File config = configFile.toFile();
         if (!config.exists()) {
-            error(String.format("Config file %s not found. Run fireguard with no arguments to see the example of it.",
-                    config));
+            throwRuntime("Config file %s not found. Run fireguard with no arguments to see the example of it.",
+                    config);
         }
         FileInputStream in = new FileInputStream(config);
         defaultProps.load(in);
