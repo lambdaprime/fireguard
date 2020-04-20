@@ -1,3 +1,10 @@
+/**
+ * Copyright 2020 lambdaprime
+ * 
+ * Email: id.blackmesa@gmail.com 
+ * Website: https://github.com/lambdaprime
+ * 
+ */
 package id.fireguard.net;
 
 import java.nio.file.Path;
@@ -18,22 +25,22 @@ public class NetworkStore {
     }
 
     public NetworkStore(ObjectStore<HashSet<NetworkEntity>> store) {
-    	this.store = store;
-    	this.set = store.load().orElse(new HashSet<>());
+        this.store = store;
+        this.set = store.load().orElse(new HashSet<>());
     }
 
     public void add(NetworkEntity entity) {
-    	if (findAll().stream().map(NetworkEntity::getSubnet)
-    			.anyMatch(Predicate.isEqual(entity.getSubnet())))
-    		throw new RuntimeException("Net with such subnet already exist");
-    	set.add(entity);
-    	save();
+        if (findAll().stream().map(NetworkEntity::getSubnet)
+                .anyMatch(Predicate.isEqual(entity.getSubnet())))
+            throw new RuntimeException("Net with such subnet already exist");
+        set.add(entity);
+        save();
     }
 
     public void update(NetworkEntity entity) {
-    	set.remove(entity);
-    	set.add(entity);
-    	save();
+        set.remove(entity);
+        set.add(entity);
+        save();
     }
 
     public void save() {

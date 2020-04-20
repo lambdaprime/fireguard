@@ -1,3 +1,10 @@
+/**
+ * Copyright 2020 lambdaprime
+ * 
+ * Email: id.blackmesa@gmail.com 
+ * Website: https://github.com/lambdaprime
+ * 
+ */
 package id.fireguard.vmm;
 
 import static java.lang.String.format;
@@ -24,8 +31,8 @@ public class VirtualMachine {
     }
 
     public VirtualMachine withPid(Long pid) {
-    	this.pid = Optional.of(pid);
-    	return this;
+        this.pid = Optional.of(pid);
+        return this;
     }
 
     public Path getHome() {

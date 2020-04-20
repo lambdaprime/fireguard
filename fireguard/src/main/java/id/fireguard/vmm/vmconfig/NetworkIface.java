@@ -1,39 +1,46 @@
+/**
+ * Copyright 2020 lambdaprime
+ * 
+ * Email: id.blackmesa@gmail.com 
+ * Website: https://github.com/lambdaprime
+ * 
+ */
 package id.fireguard.vmm.vmconfig;
 
 public class NetworkIface {
-	
-	private String ifaceId;
-	private String mac;
-	private String hostDevName;
-	
-	public NetworkIface(String ifaceId, String mac, String hostDevName) {
-		this.ifaceId = ifaceId;
-		this.mac = mac;
-		this.hostDevName = hostDevName;
-	}
 
-	public String getIfaceId() {
-		return ifaceId;
-	}
+    private String ifaceId;
+    private String mac;
+    private String hostDevName;
 
-	public void setIfaceId(String ifaceId) {
-		this.ifaceId = ifaceId;
-	}
+    public NetworkIface(String ifaceId, String mac, String hostDevName) {
+        this.ifaceId = ifaceId;
+        this.mac = mac;
+        this.hostDevName = hostDevName;
+    }
 
-	public String getMac() {
-		return mac;
-	}
+    public String getIfaceId() {
+        return ifaceId;
+    }
 
-	public void setMac(String mac) {
-		this.mac = mac;
-	}
+    public void setIfaceId(String ifaceId) {
+        this.ifaceId = ifaceId;
+    }
 
-	public String getHostDevName() {
-		return hostDevName;
-	}
+    public String getMac() {
+        return mac;
+    }
 
-	public void setHostDevName(String hostDevName) {
-		this.hostDevName = hostDevName;
-	}
-	
+    public void setMac(String mac) {
+        this.mac = mac;
+    }
+
+    public String getHostDevName() {
+        return hostDevName;
+    }
+
+    public void setHostDevName(String hostDevName) {
+        this.hostDevName = hostDevName;
+    }
+
 }

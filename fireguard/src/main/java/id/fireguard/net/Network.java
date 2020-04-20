@@ -1,3 +1,10 @@
+/**
+ * Copyright 2020 lambdaprime
+ * 
+ * Email: id.blackmesa@gmail.com 
+ * Website: https://github.com/lambdaprime
+ * 
+ */
 package id.fireguard.net;
 
 import static java.lang.String.format;
@@ -13,44 +20,44 @@ public class Network {
     private InetAddress netmask;
     private Set<NetworkInterface> ifaces = new HashSet<>();
 
-	public Network(String id, InetAddress subnet, InetAddress netmask) {
-		this.id = id;
-		this.subnet = subnet;
-		this.netmask = netmask;
-	}
-
-    public Network withInterfaces(Set<NetworkInterface> ifaces) {
-    	this.ifaces = ifaces;
-    	return this;
+    public Network(String id, InetAddress subnet, InetAddress netmask) {
+        this.id = id;
+        this.subnet = subnet;
+        this.netmask = netmask;
     }
 
-	public String getId() {
-		return id;
-	}
+    public Network withInterfaces(Set<NetworkInterface> ifaces) {
+        this.ifaces = ifaces;
+        return this;
+    }
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public InetAddress getSubnet() {
-		return subnet;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public void setSubnet(InetAddress subnet) {
-		this.subnet = subnet;
-	}
+    public InetAddress getSubnet() {
+        return subnet;
+    }
 
-	public InetAddress getNetmask() {
-		return netmask;
-	}
+    public void setSubnet(InetAddress subnet) {
+        this.subnet = subnet;
+    }
 
-	public void setNetmask(InetAddress netmask) {
-		this.netmask = netmask;
-	}
+    public InetAddress getNetmask() {
+        return netmask;
+    }
 
-	public Set<NetworkInterface> getInterfaces() {
-		return ifaces;
-	}
+    public void setNetmask(InetAddress netmask) {
+        this.netmask = netmask;
+    }
+
+    public Set<NetworkInterface> getInterfaces() {
+        return ifaces;
+    }
 
     @Override
     public String toString() {

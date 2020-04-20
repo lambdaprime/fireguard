@@ -1,3 +1,10 @@
+/**
+ * Copyright 2020 lambdaprime
+ * 
+ * Email: id.blackmesa@gmail.com 
+ * Website: https://github.com/lambdaprime
+ * 
+ */
 package id.fireguard.vmm.vmconfig;
 
 import java.nio.file.Path;
@@ -11,12 +18,12 @@ public class VmConfigUtils {
     private final VmConfigJsonUtils vmJsonUtils;
 
     public VmConfigUtils() {
-    	this(new VmConfigJsonUtils());
+        this(new VmConfigJsonUtils());
     }
 
     public VmConfigUtils(VmConfigJsonUtils vmJsonUtils) {
-		this.vmJsonUtils = vmJsonUtils;
-	}
+        this.vmJsonUtils = vmJsonUtils;
+    }
 
     public VmConfig load(Path vmHome) {
         Path vmConfigPath = vmHome.resolve(VM_CONFIG_JSON);
@@ -25,20 +32,20 @@ public class VmConfigUtils {
     }
 
     public void save(VmConfig vmConfig) {
-    	vmJsonUtils.save(vmConfig.getLocation(), vmConfig.getVmConfigJson());
+        vmJsonUtils.save(vmConfig.getLocation(), vmConfig.getVmConfigJson());
     }
-    
+
     public void update(Path vmHome, String jqExpr) {
         Path vmConfigPath = vmHome.resolve(VM_CONFIG_JSON);
         try {
-        	var proc = new XProcess(new Jq().withFile(vmConfigPath)
-            		.withFilter(jqExpr)
-            		.withInplaceMode()
-            		.run());
-        	var ret = proc.code().get();
-        	if (ret != 0) {
-        		throw new RuntimeException(proc.stderrAsString());
-        	}
+            var proc = new XProcess(new Jq().withFile(vmConfigPath)
+                    .withFilter(jqExpr)
+                    .withInplaceMode()
+                    .run());
+            var ret = proc.code().get();
+            if (ret != 0) {
+                throw new RuntimeException(proc.stderrAsString());
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

@@ -1,3 +1,10 @@
+/**
+ * Copyright 2020 lambdaprime
+ * 
+ * Email: id.blackmesa@gmail.com 
+ * Website: https://github.com/lambdaprime
+ * 
+ */
 package id.fireguard.vmm;
 
 import static java.util.stream.Collectors.toList;
@@ -16,18 +23,18 @@ public class VirtualMachinesStore {
     private HashSet<VirtualMachineEntity> set;
 
     public VirtualMachinesStore(Path file) {
-    	this.store = new ObjectStore<>(file);
-    	this.set = store.load().orElse(new HashSet<>());
+        this.store = new ObjectStore<>(file);
+        this.set = store.load().orElse(new HashSet<>());
     }
 
     public void add(VirtualMachineEntity entity) {
-    	set.add(entity);
-    	save();
+        set.add(entity);
+        save();
     }
 
     public void update(VirtualMachineEntity entity) {
-    	set.add(entity);
-    	save();
+        set.add(entity);
+        save();
     }
 
     public void save() {
