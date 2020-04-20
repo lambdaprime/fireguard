@@ -1,3 +1,10 @@
+/**
+ * Copyright 2020 lambdaprime
+ * 
+ * Email: id.blackmesa@gmail.com 
+ * Website: https://github.com/lambdaprime
+ * 
+ */
 package id.fireguard.net;
 
 import java.io.Serializable;
@@ -14,23 +21,23 @@ public class NetworkEntity implements Serializable {
     InetAddress netmask;
     Set<NetworkInterfaceEntity> ifaces;
 
-	public NetworkEntity(String id, InetAddress subnet, InetAddress netmask) {
-		this.id = id;
-		this.subnet = subnet;
-		this.netmask = netmask;
-	}
+    public NetworkEntity(String id, InetAddress subnet, InetAddress netmask) {
+        this.id = id;
+        this.subnet = subnet;
+        this.netmask = netmask;
+    }
 
-	public String getId() {
-		return id;
-	}
-	
-	public InetAddress getSubnet() {
-		return subnet;
-	}
-	
-	public InetAddress getNetmask() {
-		return netmask;
-	}
+    public String getId() {
+        return id;
+    }
+
+    public InetAddress getSubnet() {
+        return subnet;
+    }
+
+    public InetAddress getNetmask() {
+        return netmask;
+    }
 
     @Override
     public boolean equals(Object obj) {

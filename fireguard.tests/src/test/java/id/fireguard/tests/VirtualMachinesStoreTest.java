@@ -1,13 +1,17 @@
-/*
+/**
  * Copyright 2020 lambdaprime
+ * 
+ * Email: id.blackmesa@gmail.com 
+ * Website: https://github.com/lambdaprime
+ * 
  */
-
 package id.fireguard.tests;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import id.fireguard.vmm.VirtualMachineEntity;
@@ -34,8 +38,8 @@ public class VirtualMachinesStoreTest {
 
         pm = new VirtualMachinesStore(store);
         var vms = pm.findAll();
-        Assertions.assertEquals(1, vms.size());
-        Assertions.assertEquals("id: null\nhome folder: /tmp/lol\nsocket: /tmp/sock\nstate: null\npid: null\n",
-            vms.stream().findFirst().get().toString());
+        assertEquals(1, vms.size());
+        assertEquals("id: null\nhome folder: /tmp/lol\nsocket: /tmp/sock\nstate: null\npid: null\n",
+                vms.stream().findFirst().get().toString());
     }
 }

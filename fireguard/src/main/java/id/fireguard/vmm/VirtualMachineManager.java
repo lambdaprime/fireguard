@@ -1,3 +1,10 @@
+/**
+ * Copyright 2020 lambdaprime
+ * 
+ * Email: id.blackmesa@gmail.com 
+ * Website: https://github.com/lambdaprime
+ * 
+ */
 package id.fireguard.vmm;
 
 import java.io.IOException;
@@ -49,7 +56,7 @@ public class VirtualMachineManager {
     }
 
     public VirtualMachine find(String vmId) {
-    	Supplier<RuntimeException> supply = () -> new RuntimeException("Not found vm with id " + vmId);
+        Supplier<RuntimeException> supply = () -> new RuntimeException("Not found vm with id " + vmId);
         return asVirtualMachine(manager.findVm(vmId).orElseThrow(supply));
     }
 
@@ -71,14 +78,14 @@ public class VirtualMachineManager {
         if (socket.toFile().exists())
             throw new RuntimeException("Socket file exists: " + socket);
         var pb = new ProcessBuilder("screen",
-            "-S",
-            vmId,
-            "-Dm",
-            settings.getFirecracker().toString(),
-            "--api-sock",
-            socket.toString(),
-            "--config-file",
-            vm.getVmConfig().getLocation().toString());
+                "-S",
+                vmId,
+                "-Dm",
+                settings.getFirecracker().toString(),
+                "--api-sock",
+                socket.toString(),
+                "--config-file",
+                vm.getVmConfig().getLocation().toString());
         pb.directory(vm.getHome().toFile());
         try {
             var proc = pb.start();
@@ -94,12 +101,12 @@ public class VirtualMachineManager {
     public void stop(String vmId) {
         VirtualMachine vm = find(vmId);
         vm.getPid()
-        .flatMap(ProcessHandle::of)
-        .filter(ProcessHandle::isAlive)
-        .ifPresent(ph -> {
-            ph.children().forEach(this::killAndWait);
-            killAndWait(ph);
-        });
+            .flatMap(ProcessHandle::of)
+            .filter(ProcessHandle::isAlive)
+            .ifPresent(ph -> {
+                ph.children().forEach(this::killAndWait);
+                killAndWait(ph);
+            });
         updateStates(vm);
     }
 
@@ -152,10 +159,10 @@ public class VirtualMachineManager {
 
     private VirtualMachine asVirtualMachine(VirtualMachineEntity entity) {
         return builder.build(entity.id,
-            entity.state,
-            Paths.get(entity.homeFolder),
-            Paths.get(entity.socket),
-            Optional.ofNullable(entity.pid));
+                entity.state,
+                Paths.get(entity.homeFolder),
+                Paths.get(entity.socket),
+                Optional.ofNullable(entity.pid));
     }
 
     private VirtualMachineEntity asVirtualMachineEntity(VirtualMachine vm) {
@@ -173,9 +180,9 @@ public class VirtualMachineManager {
         Unchecked.run(() -> ph.onExit().get());
     }
 
-	public void onAttach(NetworkInterface iface) {
-		var vmConfig = find(iface.getVmId()).getVmConfig();
-		vmConfig.setIface("eth0", iface.getName(), iface.getMac().toString());
-		configUtils.save(vmConfig);
-	}
+    public void onAttach(NetworkInterface iface) {
+        var vmConfig = find(iface.getVmId()).getVmConfig();
+        vmConfig.setIface("eth0", iface.getName(), iface.getMac().toString());
+        configUtils.save(vmConfig);
+    }
 }

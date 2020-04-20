@@ -1,3 +1,10 @@
+/**
+ * Copyright 2020 lambdaprime
+ * 
+ * Email: id.blackmesa@gmail.com 
+ * Website: https://github.com/lambdaprime
+ * 
+ */
 package id.fireguard;
 
 import static id.xfunction.XUtils.error;
@@ -12,10 +19,10 @@ import id.xfunction.XAsserts;
 
 public class Settings {
 
-	private Path stage, originVm, vmStore, netStore, firecracker;
-	private Path networkManagerConfig;
+    private Path stage, originVm, vmStore, netStore, firecracker;
+    private Path networkManagerConfig;
 
-	public Path getStage() {
+    public Path getStage() {
         return stage;
     }
 
@@ -24,9 +31,9 @@ public class Settings {
     }
 
     public static Settings load() throws Exception {
-    	return load(Paths.get(System.getProperty("user.home"), ".fireguard"));
+        return load(Paths.get(System.getProperty("user.home"), ".fireguard"));
     }
-    
+
     public static Settings load(Path configFile) throws Exception {
         Properties defaultProps = loadProperties(configFile);
         var settings = new Settings();
@@ -41,18 +48,18 @@ public class Settings {
     }
 
     private static Path getStore(String store) {
-    	XAsserts.assertNotNull(store, "Wrong config file. Property 'store' is missing.");
-		var path = Paths.get(store);
-		path.toFile().mkdirs();
-		return path;
-	}
+        XAsserts.assertNotNull(store, "Wrong config file. Property 'store' is missing.");
+        var path = Paths.get(store);
+        path.toFile().mkdirs();
+        return path;
+    }
 
-	private static Properties loadProperties(Path configFile) throws Exception {
+    private static Properties loadProperties(Path configFile) throws Exception {
         Properties defaultProps = new Properties();
         File config = configFile.toFile();
         if (!config.exists()) {
             error(String.format("Config file %s not found. Run fireguard with no arguments to see the example of it.",
-            		config));
+                    config));
         }
         FileInputStream in = new FileInputStream(config);
         defaultProps.load(in);
@@ -68,11 +75,11 @@ public class Settings {
         return firecracker;
     }
 
-	public Path getNetStore() {
-		return netStore;
-	}
+    public Path getNetStore() {
+        return netStore;
+    }
 
-	public Path getNetworkManagerConfig() {
-		return networkManagerConfig;
-	}
+    public Path getNetworkManagerConfig() {
+        return networkManagerConfig;
+    }
 }

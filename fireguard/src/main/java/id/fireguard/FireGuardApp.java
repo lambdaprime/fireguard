@@ -1,3 +1,10 @@
+/**
+ * Copyright 2020 lambdaprime
+ * 
+ * Email: id.blackmesa@gmail.com 
+ * Website: https://github.com/lambdaprime
+ * 
+ */
 package id.fireguard;
 
 import static java.lang.System.exit;
@@ -18,7 +25,7 @@ import id.xfunction.SmartArgs;
 
 public class FireGuardApp {
 
-	@SuppressWarnings("resource")
+    @SuppressWarnings("resource")
     private static void usage() throws IOException {
         try (Scanner scanner = new Scanner(FireGuardApp.class.getResource("/README.md").openStream())
                 .useDelimiter("\n")) {
@@ -40,24 +47,24 @@ public class FireGuardApp {
         var cmd = positionalArgs.remove(0);
         switch (cmd) {
         case "vm": {
-        	new VmCommand(createVmm(settings)).execute(positionalArgs);
-        	break;
+            new VmCommand(createVmm(settings)).execute(positionalArgs);
+            break;
         }
         case "net": {
-        	var nm = new NetworkManagerBuilder(settings).create();
-        	nm.onAttach(createVmm(settings)::onAttach);
-        	new NetCommand(nm).execute(positionalArgs); break;
+            var nm = new NetworkManagerBuilder(settings).create();
+            nm.onAttach(createVmm(settings)::onAttach);
+            new NetCommand(nm).execute(positionalArgs); break;
         }
         default: usage();
         }
     }
 
     private VirtualMachineManager createVmm(Settings settings) {
-    	var pm = new VirtualMachinesStore(settings.getVmStore());
+        var pm = new VirtualMachinesStore(settings.getVmStore());
         return VirtualMachineManager.create(settings, pm);
-	}
+    }
 
-	public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception {
         if (args.length < 1) {
             usage();
             exit(1);
@@ -65,10 +72,10 @@ public class FireGuardApp {
 
         List<String> positionalArgs = new LinkedList<>();
         new SmartArgs(Map.of(), positionalArgs::add)
-        	.parse(args);
+            .parse(args);
 
         try {
-        	new FireGuardApp().run(positionalArgs);
+            new FireGuardApp().run(positionalArgs);
         } catch (CommandIllegalArgumentException e) {
             usage();
             exit(1);

@@ -1,3 +1,10 @@
+/**
+ * Copyright 2020 lambdaprime
+ * 
+ * Email: id.blackmesa@gmail.com 
+ * Website: https://github.com/lambdaprime
+ * 
+ */
 package id.fireguard;
 
 import static java.lang.System.out;
@@ -63,7 +70,7 @@ public class VmCommand implements Command {
 
     @Override
     public void execute(List<String> positionalArgs) throws CommandIllegalArgumentException {
-    	var cmd = positionalArgs.remove(0);
+        var cmd = positionalArgs.remove(0);
         switch (cmd) {
         case "create": create(positionalArgs.stream().findAny()); break;
         case "showAll": showAll(); break;
