@@ -49,8 +49,8 @@ public class IpTablesTests {
     @Test
     public void test_add_to_table() throws Exception {
         iptables.add(new Rule(Chain.POSTROUTING, Target.MASQUERADE)
-                .withTable(Table.NAT)
+                .withTable(Table.nat)
                 .withOutIface("eth0"));
-        assertEquals("iptables -t NAT -A POSTROUTING -o eth0 -j MASQUERADE", out.get(0));
+        assertEquals("iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE", out.get(0));
     }
 }
