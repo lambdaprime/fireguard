@@ -7,6 +7,9 @@
  */
 package id.jnix.net.iptables;
 
-public enum Table {
-    nat
+import java.io.Serializable;
+import java.util.List;
+
+public interface Module extends Serializable {
+    List<String> getArgs();
 }

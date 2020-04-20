@@ -10,14 +10,15 @@ package id.jnix.net.iptables;
 import java.io.Serializable;
 import java.util.Optional;
 
-public class Rule implements Serializable{
+public class Rule implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    Optional<Table> table = Optional.empty();
-    Chain chain;
-    Optional<String> inIface = Optional.empty();
-    Optional<String> outIface = Optional.empty();
-    Target target;
+    private Optional<Table> table = Optional.empty();
+    private Chain chain;
+    private Optional<String> inIface = Optional.empty();
+    private Optional<String> outIface = Optional.empty();
+    private Optional<Module> module = Optional.empty();
+    private Target target;
 
     public Rule(Chain chain, Target target) {
         this.chain = chain;
@@ -38,4 +39,34 @@ public class Rule implements Serializable{
         outIface = Optional.of(s);
         return this;
     }
+
+    public Rule withModule(Module m) {
+        module = Optional.of(m);
+        return this;
+    }
+    
+    public Optional<Table> getTable() {
+        return table;
+    }
+    
+    public Chain getChain() {
+        return chain;
+    }
+    
+    public Target getTarget() {
+        return target;
+    }
+    
+    public Optional<String> getInIface() {
+        return inIface;
+    }
+    
+    public Optional<String> getOutIface() {
+        return outIface;
+    }
+    
+    public Optional<Module> getModule() {
+        return module;
+    }
+    
 }
