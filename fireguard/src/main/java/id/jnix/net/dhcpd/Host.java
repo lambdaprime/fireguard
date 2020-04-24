@@ -14,12 +14,12 @@ import java.util.stream.Collectors;
 
 public class Host {
 
-    String name;
-    String mac;
-    InetAddress fixedAddress;
-    List<InetAddress> routers = List.of();
-    Optional<InetAddress> subnetMask = Optional.empty();
-    List<InetAddress> dns = List.of();
+    private String name;
+    private String mac;
+    private InetAddress fixedAddress;
+    private List<InetAddress> routers = List.of();
+    private Optional<InetAddress> subnetMask = Optional.empty();
+    private List<InetAddress> dns = List.of();
 
     public Host(String name, String mac, InetAddress fixedAddress) {
         this.name = name;
