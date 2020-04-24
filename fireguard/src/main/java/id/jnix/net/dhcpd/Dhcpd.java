@@ -10,6 +10,7 @@ package id.jnix.net.dhcpd;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 // Can't open /tmp/dhcpd105391253209477051: Permission denied
@@ -26,7 +27,7 @@ public class Dhcpd {
     }
 
     public Process start(DhcpdConfig conf) throws Exception {
-        Path configFile = Files.createTempFile("dhcpd", "");
+        Path configFile = Paths.get(conf.getConfigLocation());
         Files.write(configFile, conf.toString().getBytes());
         return run(configFile);
     }
