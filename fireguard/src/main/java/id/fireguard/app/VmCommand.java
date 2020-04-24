@@ -5,7 +5,7 @@
  * Website: https://github.com/lambdaprime
  * 
  */
-package id.fireguard;
+package id.fireguard.app;
 
 import static java.lang.System.out;
 

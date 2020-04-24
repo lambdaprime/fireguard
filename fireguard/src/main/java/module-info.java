@@ -14,6 +14,7 @@ module id.fireguard {
     exports id.jnix.net.dhcpd;
     exports id.jnix.net.iptables;
     exports id.fireguard to id.fireguard.tests;
+    exports id.fireguard.app to id.fireguard.tests;
     exports id.fireguard.vmm to id.fireguard.tests;
     exports id.fireguard.net to id.fireguard.tests;
     exports id.fireguard.net.generators to id.fireguard.tests;
