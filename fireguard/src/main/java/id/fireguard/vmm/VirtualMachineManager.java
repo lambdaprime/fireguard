@@ -14,12 +14,14 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import id.fireguard.Settings;
 import id.fireguard.net.NetworkInterface;
 import id.fireguard.vmm.vmconfig.VmConfigUtils;
+import id.xfunction.XObservable;
 import id.xfunction.function.Unchecked;
 
 public class VirtualMachineManager {
@@ -28,6 +30,7 @@ public class VirtualMachineManager {
     private VirtualMachinesStore manager;
     private VirtualMachineBuilder builder = new VirtualMachineBuilder();
     private VmConfigUtils configUtils = new VmConfigUtils();
+    private XObservable<String> onBeforeStart = new XObservable<>();
 
     private VirtualMachineManager(Settings settings, VirtualMachinesStore manager) {
         this.settings = settings;
@@ -77,6 +80,8 @@ public class VirtualMachineManager {
         Path socket = vm.getSocket();
         if (socket.toFile().exists())
             throw new RuntimeException("Socket file exists: " + socket);
+        vm.getVmConfig().getHostIface().ifPresent(onBeforeStart::updateAll);
+        
         var pb = new ProcessBuilder("screen",
                 "-S",
                 vmId,
@@ -98,6 +103,10 @@ public class VirtualMachineManager {
         return vm;
     }
 
+	public void addBeforeStartListener(Consumer<String> listener) {
+		onBeforeStart.addListener(listener);
+	}
+	
     public void stop(String vmId) {
         VirtualMachine vm = find(vmId);
         vm.getPid()
