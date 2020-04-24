@@ -7,21 +7,44 @@
  */
 package id.jnix.net.dhcpd;
 
-import java.util.Arrays;
+import java.io.Serializable;
+import java.net.InetAddress;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class DhcpdConfig {
+public class DhcpdConfig implements Serializable {
 
-    List<Subnet> subnets = List.of();
+	private static final long serialVersionUID = 1L;
+	
+	private Map<InetAddress, SubnetSection> subnets = new LinkedHashMap<>();
 
-    public DhcpdConfig(Subnet subnets) {
-        this.subnets = Arrays.asList(subnets);
-    }
+	public DhcpdConfig() {
+		
+	}
 
-    @Override
-    public String toString() {
-        return subnets.stream().map(Subnet::toString)
-                .collect(Collectors.joining("\n"));
-    }
+	public DhcpdConfig(SubnetSection subnet) {
+		this.subnets = Map.of(subnet.getSubnet(), subnet);
+	}
+
+	public void addSubnet(SubnetSection subnet) {
+		subnets.put(subnet.getSubnet(), subnet);
+	}
+	
+	public List<SubnetSection> getSubnets() {
+		return List.copyOf(subnets.values());
+	}
+	
+	public Optional<SubnetSection> getSubnet(InetAddress subnet) {
+		return Optional.ofNullable(subnets.get(subnet));
+	}
+	
+	@Override
+	public String toString() {
+		return subnets.values().stream()
+				.map(SubnetSection::toString)
+				.collect(Collectors.joining("\n"));
+	}
 }
