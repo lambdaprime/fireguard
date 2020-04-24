@@ -25,7 +25,7 @@ public class NetworkManager {
     private NetworkStore networkStore;
     private NetworkTransformer transformer;
     private NetworkManagerConfig config;
-    private XObservable<NetworkInterface> onAttach = new XObservable<>();
+    private XObservable<NetworkInterface> onAfterAttach = new XObservable<>();
 
     protected NetworkManager(NetworkManagerConfig config, NetworkStore networkStore, NetworkTransformer transformer) {
         this.networkStore = networkStore;
@@ -56,12 +56,6 @@ public class NetworkManager {
         return "tap" + id;
     }
 
-    public List<Network> findAll() {
-        return networkStore.findAll().stream()
-                .map(transformer::fromEntity)
-                .collect(Collectors.toList());
-    }
-
     public void attach(String vmId, String netId) {
         Optional<Network> netOpt = find(netId);
         if (netOpt.isEmpty())
@@ -76,14 +70,14 @@ public class NetworkManager {
         var vmIp = nextIp(ipGen, net.getSubnet());
         var mac = config.getLastUsedMacAddr().inc();
         NetworkInterface iface = new NetworkInterface(name, vmId, hostIp, vmIp, mac);
-        onAttach.updateAll(iface);
         config.setLastUsedMacAddr(mac);
         net.getInterfaces().add(iface);
         networkStore.update(transformer.toEntity(net));
+        onAfterAttach.updateAll(iface);
     }
 
-    public void onAttach(Consumer<NetworkInterface> listener) {
-        onAttach.addListener(listener);
+    public void addOnAfterAttachListener(Consumer<NetworkInterface> listener) {
+        onAfterAttach.addListener(listener);
     }
 
     private InetAddress nextIp(IpGenerator ipGen, InetAddress subnet) {
@@ -95,6 +89,12 @@ public class NetworkManager {
     public Optional<Network> find(String netId) {
         return networkStore.findNet(netId)
                 .map(transformer::fromEntity);
+    }
+	
+    public List<Network> findAll() {
+        return networkStore.findAll().stream()
+                .map(transformer::fromEntity)
+                .collect(Collectors.toList());
     }
 
 }

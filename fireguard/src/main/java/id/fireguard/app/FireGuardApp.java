@@ -53,7 +53,7 @@ public class FireGuardApp {
         }
         case "net": {
             var nm = new NetworkManagerBuilder(settings).create();
-            nm.onAttach(createVmm(settings)::onAttach);
+            nm.addOnAfterAttachListener(createVmm(settings)::onAttach);
             new NetCommand(nm).execute(positionalArgs); break;
         }
         default: usage();
