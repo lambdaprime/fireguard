@@ -26,7 +26,8 @@ public class NetworkManagerBuilder {
     }
 
     private NetworkManagerConfig retrieveConfig() {
-        var store = new ObjectStore<NetworkManagerConfig>(settings.getNetworkManagerConfig());
+        var store = new ObjectStore<NetworkManagerConfig>(
+                settings.getConfigsLocation().resolve("nmconfig"));
         var config = store.load()
                 .orElse(new NetworkManagerConfig());
         config.addListener(store::save);

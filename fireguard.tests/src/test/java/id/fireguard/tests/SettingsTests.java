@@ -21,24 +21,17 @@ import id.fireguard.Settings;
 public class SettingsTests {
 
     @Test
-    public void test_store_not_set() {
-        Assertions.assertThrows(AssertionError.class,
-                () -> Settings.load(Files.createTempFile("gggg", "")));
-    }
-
-    @Test
-    public void test_store_created() throws Exception {
+    public void test_fireguardHome_created() throws Exception {
         Path config = Files.createTempFile("gggg", "");
-        Path storeDir = Paths.get("/tmp", "store" + System.currentTimeMillis());
+        Path fireguardHome = Paths.get("/tmp", "store" + System.currentTimeMillis());
         Files.write(config, List.of(
-                "store = " + storeDir,
+                "fireguardHome = " + fireguardHome,
                 "originVm = ",
-                "stage = ",
                 "firecracker = ",
                 "hostIface = "));
         Settings.load(config);
-        File store = storeDir.toFile();
+        File store = fireguardHome.toFile();
         Assertions.assertTrue(store.isDirectory());
-        Assertions.assertTrue(storeDir.toFile().exists());
+        Assertions.assertTrue(fireguardHome.toFile().exists());
     }
 }
