@@ -5,7 +5,7 @@
  * Website: https://github.com/lambdaprime
  * 
  */
-package id.fireguard;
+package id.fireguard.app;
 
 public class CommandIllegalArgumentException extends Exception {
 

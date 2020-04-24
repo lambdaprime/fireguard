@@ -5,7 +5,7 @@
  * Website: https://github.com/lambdaprime
  * 
  */
-package id.fireguard;
+package id.fireguard.app;
 
 import static java.lang.System.exit;
 import static java.lang.System.out;
@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
+import id.fireguard.Settings;
 import id.fireguard.net.NetworkManagerBuilder;
 import id.fireguard.vmm.VirtualMachineManager;
 import id.fireguard.vmm.VirtualMachinesStore;

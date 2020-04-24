@@ -14,8 +14,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import id.fireguard.CommandIllegalArgumentException;
-import id.fireguard.NetCommand;
+import id.fireguard.app.CommandIllegalArgumentException;
+import id.fireguard.app.NetCommand;
 import id.fireguard.net.NetworkManager;
 import id.fireguard.net.NetworkManagerConfig;
 import id.fireguard.net.NetworkStore;
