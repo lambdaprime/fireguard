@@ -8,6 +8,7 @@
 package id.fireguard;
 
 import static id.xfunction.XUtils.throwRuntime;
+import static id.xfunction.XAsserts.assertNotNull;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,12 +16,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
 
-import id.xfunction.XAsserts;
-
 public class Settings {
 
     private Path stage, originVm, vmStore, netStore, firecracker;
     private Path networkManagerConfig;
+    private String hostIface;
 
     public Path getStage() {
         return stage;
@@ -44,11 +44,13 @@ public class Settings {
         settings.originVm = Paths.get(defaultProps.getProperty("originVm"));
         settings.stage = Paths.get(defaultProps.getProperty("stage"));
         settings.firecracker = Paths.get(defaultProps.getProperty("firecracker"));
+        settings.hostIface = defaultProps.getProperty("hostIface");
+        assertNotNull(settings.hostIface, "Wrong config file. Property 'hostIface' is missing.");
         return settings;
     }
 
     private static Path getStore(String store) {
-        XAsserts.assertNotNull(store, "Wrong config file. Property 'store' is missing.");
+        assertNotNull(store, "Wrong config file. Property 'store' is missing.");
         var path = Paths.get(store);
         path.toFile().mkdirs();
         return path;
@@ -81,5 +83,9 @@ public class Settings {
 
     public Path getNetworkManagerConfig() {
         return networkManagerConfig;
+    }
+
+    public String getHostIface() {
+        return hostIface;
     }
 }

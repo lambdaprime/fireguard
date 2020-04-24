@@ -34,7 +34,8 @@ public class SettingsTests {
                 "store = " + storeDir,
                 "originVm = ",
                 "stage = ",
-                "firecracker = "));
+                "firecracker = ",
+                "hostIface = "));
         Settings.load(config);
         File store = storeDir.toFile();
         Assertions.assertTrue(store.isDirectory());
