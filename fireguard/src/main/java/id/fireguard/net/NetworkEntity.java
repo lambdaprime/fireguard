@@ -19,7 +19,7 @@ public class NetworkEntity implements Serializable {
     String id;
     InetAddress subnet;
     InetAddress netmask;
-    Set<NetworkInterfaceEntity> ifaces;
+    Set<NetworkInterfaceEntity> ifaces = Set.of();
 
     public NetworkEntity(String id, InetAddress subnet, InetAddress netmask) {
         this.id = id;
@@ -39,6 +39,10 @@ public class NetworkEntity implements Serializable {
         return netmask;
     }
 
+	public Set<NetworkInterfaceEntity> getIfaces() {
+		return ifaces;
+	}
+	
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
