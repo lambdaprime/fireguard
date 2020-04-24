@@ -13,6 +13,7 @@ public class NetworkTransformer {
 
     public NetworkInterfaceEntity toEntity(NetworkInterface n) {
         var ne = new NetworkInterfaceEntity();
+        ne.id = n.getName();
         ne.vmId = n.getVmId();
         ne.hostIp = n.getHostIp();
         ne.vmIp = n.getVmIp();
@@ -29,8 +30,8 @@ public class NetworkTransformer {
     }
 
     public NetworkInterface fromEntity(NetworkInterfaceEntity ne) {
-        var iface = new NetworkInterface(ne.getName(), ne.getVmId(), ne.getHostIp(),
-                ne.getVmIp(), ne.getMac());
+        var iface = new NetworkInterface(ne.getId(), ne.getVmId(), ne.getHostIp(),
+				ne.getVmIp(), ne.getMac());
         return iface;
     }
 

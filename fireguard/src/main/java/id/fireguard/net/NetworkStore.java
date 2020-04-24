@@ -54,6 +54,14 @@ public class NetworkStore {
     public Optional<NetworkEntity> findNet(String netId) {
         return set.stream()
                 .filter(net -> net.getId().equals(netId))
-                .findAny();
+                .findFirst();
+    }
+
+    public Optional<NetworkInterfaceEntity> findIface(String ifaceId) {
+        return set.stream()
+        		.map(NetworkEntity::getIfaces)
+        		.flatMap(Set::stream)
+                .filter(iface -> iface.getId().equals(ifaceId))
+                .findFirst();
     }
 }

@@ -15,7 +15,7 @@ public class NetworkInterfaceEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    String name;
+    String id;
     String vmId;
     InetAddress hostIp;
     InetAddress vmIp;
@@ -37,14 +37,14 @@ public class NetworkInterfaceEntity implements Serializable {
         return macAddress;
     }
 
-    public String getName() {
-        return name;
+    public String getId() {
+        return id;
     }
-
-    public void setName(String name) {
-        this.name = name;
+	
+    public void setId(String id) {
+        this.id = id;
     }
-
+	
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
@@ -57,11 +57,11 @@ public class NetworkInterfaceEntity implements Serializable {
             return false;
         }
         NetworkInterfaceEntity r = (NetworkInterfaceEntity) obj;
-        return Objects.equals(macAddress, r.macAddress);
+        return Objects.equals(id, r.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(macAddress);
+        return Objects.hash(id);
     }
 }
