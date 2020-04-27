@@ -20,6 +20,7 @@ import id.fireguard.net.NetworkManager;
 import id.fireguard.net.NetworkManagerConfig;
 import id.fireguard.net.NetworkStore;
 import id.fireguard.net.NetworkTransformer;
+import id.xfunction.CommandLineInterface;
 
 public class NetCommandTests {
 
@@ -37,7 +38,7 @@ public class NetCommandTests {
     @BeforeEach
     void setup() {
         nm = new NetworkManagerMock();
-        nc = new NetCommand(nm);
+        nc = new NetCommand(nm, CommandLineInterface.cli);
     }
 
     @Test

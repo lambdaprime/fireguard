@@ -8,7 +8,6 @@
 package id.fireguard.app;
 
 import static java.lang.System.exit;
-import static java.lang.System.out;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,6 +24,7 @@ import id.fireguard.Settings;
 import id.fireguard.net.NetworkManagerBuilder;
 import id.fireguard.vmm.VirtualMachineManager;
 import id.fireguard.vmm.VirtualMachinesStore;
+import id.xfunction.CommandLineInterface;
 import id.xfunction.SmartArgs;
 
 public class FireGuardApp {
@@ -33,13 +33,14 @@ public class FireGuardApp {
     private static Map<String, Consumer<String>> handlers = Map.of(
         "--config", val -> { configPath = Optional.of(Paths.get(val)); }
     );
+    private static CommandLineInterface cli = new CommandLineInterface();
 
     @SuppressWarnings("resource")
     private static void usage() throws IOException {
         try (Scanner scanner = new Scanner(FireGuardApp.class.getResource("/README.md").openStream())
                 .useDelimiter("\n")) {
             while (scanner.hasNext())
-                out.println(scanner.next());
+                cli.print(scanner.next());
         }
     }
 
@@ -56,13 +57,13 @@ public class FireGuardApp {
         var cmd = positionalArgs.remove(0);
         switch (cmd) {
         case "vm": {
-            new VmCommand(createVmm(settings)).execute(positionalArgs);
+            new VmCommand(createVmm(settings), cli).execute(positionalArgs);
             break;
         }
         case "net": {
             var nm = new NetworkManagerBuilder(settings).create();
             nm.addOnAfterAttachListener(createVmm(settings)::onAttach);
-            new NetCommand(nm).execute(positionalArgs); break;
+            new NetCommand(nm, cli).execute(positionalArgs); break;
         }
         default: usage();
         }
