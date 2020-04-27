@@ -6,7 +6,7 @@
  * 
  */
 module id.fireguard.tests {
-    exports id.fireguard.tests;
+    opens id.fireguard.tests;
     opens id.jnix.tests;
     opens id.jnix.tests.net.dhcpd;
 

@@ -1,0 +1,13 @@
+Creating new VM...
+id: vm-1
+home folder: /tmp/store*/stage/vm-1
+socket: /tmp/store*/stage/vm-1/firecracker.sock
+state: STOPPED
+pid: Optional.empty
+vmConfig: path: /tmp/store*/stage/vm-1/vm_config.json
+memoryGb: 1000
+vcpu: 1
+hostIface: Optional.empty
+mac: Optional.empty
+
+

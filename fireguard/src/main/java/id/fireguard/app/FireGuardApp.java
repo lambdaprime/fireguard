@@ -33,7 +33,7 @@ public class FireGuardApp {
     private static Map<String, Consumer<String>> handlers = Map.of(
         "--config", val -> { configPath = Optional.of(Paths.get(val)); }
     );
-    private static CommandLineInterface cli = new CommandLineInterface();
+    public static CommandLineInterface cli = new CommandLineInterface();
 
     @SuppressWarnings("resource")
     private static void usage() throws IOException {
@@ -50,7 +50,7 @@ public class FireGuardApp {
         f.mkdirs();
     }
 
-    private void run(List<String> positionalArgs) throws Exception {
+    public void run(List<String> positionalArgs, Optional<Path> configPath) throws Exception {
         var settings = Settings.load(configPath);
         setup(settings.getStage());
 
@@ -75,17 +75,17 @@ public class FireGuardApp {
     }
 
     public static void main(String[] args) throws Exception {
-        if (args.length < 1) {
-            usage();
-            exit(1);
-        }
-
         List<String> positionalArgs = new LinkedList<>();
         new SmartArgs(handlers, positionalArgs::add)
             .parse(args);
 
+        if (positionalArgs.size() < 1) {
+            usage();
+            exit(1);
+        }
+        
         try {
-            new FireGuardApp().run(positionalArgs);
+            new FireGuardApp().run(positionalArgs, configPath);
         } catch (CommandIllegalArgumentException e) {
             usage();
             exit(1);
