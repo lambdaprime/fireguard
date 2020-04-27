@@ -13,10 +13,13 @@ import static java.lang.System.out;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Scanner;
+import java.util.function.Consumer;
 
 import id.fireguard.Settings;
 import id.fireguard.net.NetworkManagerBuilder;
@@ -25,6 +28,11 @@ import id.fireguard.vmm.VirtualMachinesStore;
 import id.xfunction.SmartArgs;
 
 public class FireGuardApp {
+
+    private static Optional<Path> configPath = Optional.empty();
+    private static Map<String, Consumer<String>> handlers = Map.of(
+        "--config", val -> { configPath = Optional.of(Paths.get(val)); }
+    );
 
     @SuppressWarnings("resource")
     private static void usage() throws IOException {
@@ -42,7 +50,7 @@ public class FireGuardApp {
     }
 
     private void run(List<String> positionalArgs) throws Exception {
-        var settings = Settings.load();
+        var settings = Settings.load(configPath);
         setup(settings.getStage());
 
         var cmd = positionalArgs.remove(0);
@@ -72,7 +80,7 @@ public class FireGuardApp {
         }
 
         List<String> positionalArgs = new LinkedList<>();
-        new SmartArgs(Map.of(), positionalArgs::add)
+        new SmartArgs(handlers, positionalArgs::add)
             .parse(args);
 
         try {

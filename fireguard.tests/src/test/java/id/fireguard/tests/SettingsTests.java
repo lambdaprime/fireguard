@@ -12,6 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -29,7 +30,7 @@ public class SettingsTests {
                 "originVm = ",
                 "firecracker = ",
                 "hostIface = "));
-        Settings.load(config);
+        Settings.load(Optional.of(config));
         File store = fireguardHome.toFile();
         Assertions.assertTrue(store.isDirectory());
         Assertions.assertTrue(fireguardHome.toFile().exists());

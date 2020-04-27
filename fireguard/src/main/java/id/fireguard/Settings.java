@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Optional;
 import java.util.Properties;
 
 public class Settings {
@@ -31,11 +32,11 @@ public class Settings {
         return originVm;
     }
 
-    public static Settings load() throws Exception {
-        return load(Paths.get(userHome , ".fireguard"));
+    public static Settings load(Optional<Path> configPath) throws Exception {
+        return load(configPath.orElse(Paths.get(userHome , ".fireguard")));
     }
 
-    public static Settings load(Path configFile) throws Exception {
+    private static Settings load(Path configFile) throws Exception {
         Properties defaultProps = loadProperties(configFile);
         var settings = new Settings();
         var fireguardHome = getFireguardHome(defaultProps);
