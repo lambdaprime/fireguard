@@ -8,21 +8,23 @@
 package id.fireguard.app;
 
 import static id.xfunction.XAsserts.assertTrue;
-import static java.lang.System.out;
 
 import java.net.InetAddress;
 import java.util.List;
 
 import id.fireguard.net.Network;
 import id.fireguard.net.NetworkManager;
+import id.xfunction.CommandLineInterface;
 import id.xfunction.function.Unchecked;
 
 public class NetCommand implements Command {
 
     private NetworkManager nm;
+    private CommandLineInterface cli;
 
-    public NetCommand(NetworkManager nm) {
+    public NetCommand(NetworkManager nm, CommandLineInterface cli) {
         this.nm = nm;
+        this.cli = cli;
     }
 
     private void create(List<String> positionalArgs) throws CommandIllegalArgumentException {
@@ -31,20 +33,20 @@ public class NetCommand implements Command {
         String netmask = positionalArgs.get(1);
         assertTrue(Unchecked.getBoolean(() ->InetAddress.getByName(subnet).getAddress()[3] == 0),
                 "Wrong subnet format");
-        out.println("Creating new network...");
+        cli.print("Creating new network...");
         Network net = nm.create(subnet, netmask);
-        out.println(net);
+        cli.print(net);
     }
 
     private void showAll() {
-        nm.findAll().forEach(out::println);
+        nm.findAll().forEach(cli::print);
     }
 
     private void attach(List<String> positionalArgs) throws CommandIllegalArgumentException {
         if (positionalArgs.size() != 2) throw new CommandIllegalArgumentException();
         String vmId = positionalArgs.get(0);
         String netId = positionalArgs.get(1);
-        out.format("Attaching %s to %s network...\n", vmId, netId);
+        cli.print("Attaching %s to %s network...\n", vmId, netId);
         nm.attach(vmId, netId);
     }
 

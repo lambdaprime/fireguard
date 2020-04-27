@@ -7,20 +7,21 @@
  */
 package id.fireguard.app;
 
-import static java.lang.System.out;
-
 import java.util.List;
 import java.util.Optional;
 
 import id.fireguard.vmm.VirtualMachine;
 import id.fireguard.vmm.VirtualMachineManager;
+import id.xfunction.CommandLineInterface;
 
 public class VmCommand implements Command {
 
     private VirtualMachineManager vmm;
+    private CommandLineInterface cli;
 
-    public VmCommand(VirtualMachineManager vmm) {
+    public VmCommand(VirtualMachineManager vmm, CommandLineInterface cli) {
         this.vmm = vmm;
+        this.cli = cli;
     }
 
     private void startAll() {
@@ -38,16 +39,16 @@ public class VmCommand implements Command {
     }
 
     private void stop(String vmId) {
-        out.format("Stopping VM with id %s...\n", vmId);
+        cli.print("Stopping VM with id %s...\n", vmId);
         vmm.stop(vmId);
     }
 
     private void showAll() {
-        vmm.findAll().forEach(out::println);
+        vmm.findAll().forEach(cli::print);
     }
 
     private void start(String vmId) {
-        out.format("Starting VM with id %s...\n", vmId);
+        cli.print("Starting VM with id %s...\n", vmId);
         vmm.start(vmId);
     }
 
@@ -57,15 +58,15 @@ public class VmCommand implements Command {
     }
 
     private void create(Optional<String> jqExpr) {
-        out.println("Creating new VM...");
+        cli.print("Creating new VM...");
         VirtualMachine vm = vmm.create(jqExpr);
-        out.println(vm);
+        cli.print(vm);
     }
 
     private void update(String vmId, String jqExpr) {
-        out.println("Updating VM with id " + vmId);
+        cli.print("Updating VM with id " + vmId);
         var vm = vmm.update(vmId, jqExpr);
-        out.println(vm);
+        cli.print(vm);
     }
 
     @Override
