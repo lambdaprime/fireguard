@@ -4,5 +4,8 @@ allprojects {
     }
 }
 
-version = '1.0'
-
+ext {
+    version = '1'
+    projectName = 'fireguard'
+    releaseFileName = "${projectName}-${version}.zip"
+}

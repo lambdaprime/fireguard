@@ -21,7 +21,15 @@ dependencies {
 sourceCompatibility = '11'
 targetCompatibility = '11'
 
-version = "1.0"
+String testDir = "$buildDir/fireguard"
+String testSrcDir = "$projectDir/src/test"
+
+// Gradle has no UnZip task so we reuse Copy for that
+task myTest(type: Copy) {
+    mkdir file(testDir)
+    from zipTree("${project.rootDir}/fireguard/release/${releaseFileName}")
+    into "$buildDir"
+}
 
 compileTestJava {
     doFirst {
@@ -38,3 +46,5 @@ test {
         exclude '**/module-info.class'
     }
 }
+
+test.dependsOn myTest
