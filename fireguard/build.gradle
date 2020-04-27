@@ -15,12 +15,11 @@ dependencies {
 sourceCompatibility = '11'
 targetCompatibility = '11'
 
-def projectName = 'fireguard'
-def releaseFileName = "${projectName}.zip"
+def releaseDir = "release/${projectName}/${projectName}"
 
 jar { 
     manifest { 
-        attributes 'Main-Class': 'id.fireguard.FireGuardApp',
+        attributes 'Implementation-Version': "${rootProject.version}",
                    'Class-Path': configurations.compile.collect { it.getName() }.join(' ')
     }
 }
@@ -44,15 +43,21 @@ packageDistribution.doLast {
     delete "$projectDir/release/$projectName"
 }
 
+import org.apache.tools.ant.filters.ReplaceTokens
+task updateVersion(type:Copy) {
+    from "${project.rootDir}/README.md"
+    into releaseDir
+    filter(ReplaceTokens, tokens: [version: rootProject.version])
+}
+
 task createRelease(type: Copy) {
-    def out = "release/$projectName/$projectName"
     from jar.archiveFile
     from file("$projectDir/libs")
     from "${project.rootDir}/README.md"
     from "${project.rootDir}/QuickStart.md"
     from "$projectDir/src/fireguard"
     from "$projectDir/src/setup_netiface.sh"
-    into out
+    into releaseDir
 }
 
 task cleanRelease(type: Delete) {
