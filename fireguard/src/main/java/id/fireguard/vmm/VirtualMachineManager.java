@@ -86,7 +86,7 @@ public class VirtualMachineManager {
                 "-S",
                 vmId,
                 "-Dm",
-                settings.getFirecracker().toString(),
+                "firecracker",
                 "--api-sock",
                 socket.toString(),
                 "--config-file",

@@ -19,7 +19,7 @@ import java.util.Properties;
 public class Settings {
 
     private static String userHome = System.getProperty("user.home");
-    private Path stage, originVm, vmStore, netStore, firecracker;
+    private Path stage, originVm, vmStore, netStore;
     private Path configsLocation;
     private String hostIface;
 
@@ -44,7 +44,6 @@ public class Settings {
         settings.netStore = store.resolve("net");
         settings.originVm = Paths.get(defaultProps.getProperty("originVm"));
         settings.stage = initLocation(fireguardHome, "stage");
-        settings.firecracker = Paths.get(defaultProps.getProperty("firecracker"));
         settings.hostIface = defaultProps.getProperty("hostIface");
         settings.configsLocation = initLocation(fireguardHome, "configs");
         assertNotNull(settings.hostIface, "Wrong config file. Property 'hostIface' is missing.");
@@ -80,10 +79,6 @@ public class Settings {
 
     public Path getVmStore() {
         return vmStore;
-    }
-
-    public Path getFirecracker() {
-        return firecracker;
     }
 
     public Path getNetStore() {
