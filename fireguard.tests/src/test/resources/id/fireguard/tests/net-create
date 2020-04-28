@@ -1,0 +1,6 @@
+Creating new network...
+id: net-1
+subnet: /10.1.2.0
+netmask: /255.255.255.0
+ifaces: []
+

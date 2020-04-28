@@ -7,6 +7,7 @@
  */
 package id.fireguard.app;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,7 +45,9 @@ public class VmCommand implements Command {
     }
 
     private void showAll() {
-        vmm.findAll().forEach(cli::print);
+        vmm.findAll().stream()
+            .sorted(Comparator.comparing(VirtualMachine::getId))
+            .forEach(cli::print);
     }
 
     private void start(String vmId) {

@@ -1,0 +1,36 @@
+id: vm-1
+home folder: /tmp/store*/stage/vm-1
+socket: /tmp/store*/stage/vm-1/firecracker.sock
+state: STARTED
+pid: Optional[*]
+vmConfig: path: /tmp/store*/stage/vm-1/vm_config.json
+memoryGb: 1000
+vcpu: 1
+hostIface: Optional.empty
+mac: Optional.empty
+
+
+id: vm-2
+home folder: /tmp/store*/stage/vm-2
+socket: /tmp/store*/stage/vm-2/firecracker.sock
+state: STOPPED
+pid: Optional.empty
+vmConfig: path: /tmp/store*/stage/vm-2/vm_config.json
+memoryGb: 1000
+vcpu: 1
+hostIface: Optional.empty
+mac: Optional.empty
+
+
+id: vm-3
+home folder: /tmp/store*/stage/vm-3
+socket: /tmp/store*/stage/vm-3/firecracker.sock
+state: STOPPED
+pid: Optional.empty
+vmConfig: path: /tmp/store*/stage/vm-3/vm_config.json
+memoryGb: 1000
+vcpu: 1
+hostIface: Optional.empty
+mac: Optional.empty
+
+
