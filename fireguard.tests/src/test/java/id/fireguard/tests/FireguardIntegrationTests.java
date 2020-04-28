@@ -52,24 +52,57 @@ public class FireguardIntegrationTests {
         XUtils.deleteDir(fireguardHome);
     }
     
-    @Test
     public void test_no_args() throws Exception {
         Assertions.assertEquals(XUtils.readResource("README.md"),
                 new XExec(FIREGUARD_PATH).run().stdoutAsString());
     }
     
-    @Test
-    public void test_vm_showAll() throws Exception {
+    public void test_vm_showAll_empty() throws Exception {
         Assertions.assertEquals("",
                 run("vm showAll").run().stdoutAsString());
     }
 
-    @Test
     public void test_vm_create() throws Exception {
         var out = run("vm create").run().stdoutAsString();
         System.out.println(out);
         Assertions.assertTrue(new TemplateMatcher(XUtils.readResource(
                 getClass(), "vm-create")).matches(out));
+    }
+    
+    public void test_vm_showAll() throws Exception {
+        run("vm create").run().stdout().forEach(System.out::println);
+        run("vm create").run().stdout().forEach(System.out::println);
+        var out = run("vm showAll").run().stdoutAsString();
+        System.out.println(out);
+        Assertions.assertTrue(new TemplateMatcher(XUtils.readResource(
+                getClass(), "vm-showAll")).matches(out));
+    }
+
+    public void test_vm_start() throws Exception {
+        var out1 = run("vm start vm-1").run().stdoutAsString();
+        System.out.println(out1);
+        var out2 = run("vm showAll").run().stdoutAsString();
+        System.out.println(out2);
+        Assertions.assertEquals("Starting VM with id vm-1...\n", out1);
+        Assertions.assertTrue(new TemplateMatcher(XUtils.readResource(
+                getClass(), "vm-start")).matches(out2));
+    }
+
+    public void test_net_create() throws Exception {
+        var out = run("net create 10.1.2.0 255.255.255.0").run().stdoutAsString();
+        System.out.println(out);
+        Assertions.assertTrue(new TemplateMatcher(XUtils.readResource(
+                getClass(), "net-create")).matches(out));
+    }
+    
+    @Test
+    public void test() throws Exception {
+        test_no_args();
+        test_vm_showAll_empty();
+        test_vm_create();
+        test_vm_showAll();
+        test_vm_start();
+        test_net_create();
     }
     
     private XExec run(String args) {

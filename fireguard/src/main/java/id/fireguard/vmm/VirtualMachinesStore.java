@@ -33,6 +33,7 @@ public class VirtualMachinesStore {
     }
 
     public void update(VirtualMachineEntity entity) {
+        set.remove(entity);
         set.add(entity);
         save();
     }
