@@ -19,10 +19,10 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import id.fireguard.Settings;
+import id.fireguard.Utils;
 import id.fireguard.net.NetworkInterface;
 import id.fireguard.vmm.vmconfig.VmConfigUtils;
 import id.xfunction.XObservable;
-import id.xfunction.function.Unchecked;
 
 public class VirtualMachineManager {
 
@@ -31,6 +31,7 @@ public class VirtualMachineManager {
     private VirtualMachineBuilder builder = new VirtualMachineBuilder();
     private VmConfigUtils configUtils = new VmConfigUtils();
     private XObservable<String> onBeforeStart = new XObservable<>();
+    private Utils utils = new Utils();
 
     private VirtualMachineManager(Settings settings, VirtualMachinesStore manager) {
         this.settings = settings;
@@ -112,10 +113,7 @@ public class VirtualMachineManager {
         vm.getPid()
             .flatMap(ProcessHandle::of)
             .filter(ProcessHandle::isAlive)
-            .ifPresent(ph -> {
-                ph.children().forEach(this::killAndWait);
-                killAndWait(ph);
-            });
+            .ifPresent(utils::killAndWait);
         updateStates(vm);
     }
 
@@ -182,11 +180,6 @@ public class VirtualMachineManager {
         entity.state = vm.getState();
         entity.pid = vm.getPid().orElse(null);
         return entity;
-    }
-
-    private void killAndWait(ProcessHandle ph) {
-        ph.destroy();
-        Unchecked.run(() -> ph.onExit().get());
     }
 
     public void onAttach(NetworkInterface iface) {
