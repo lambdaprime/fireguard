@@ -31,20 +31,14 @@ import id.xfunction.XProcess;
  * not allow that)</li>
  * </ul>
  */
-public class Jq {
+public class Jq extends CommandHasSudo<Jq> {
 
     private List<String> options = List.of();
     private String filter;
     private Optional<Stream<String>> inputOpt = Optional.empty();
     private Optional<Path> fileOpt = Optional.empty();
 
-    private boolean withSudo;
     private boolean withInplace;
-
-    public Jq withSudo() {
-        this.withSudo = true;
-        return this;
-    }
 
     public Jq withInplaceMode() {
         this.withInplace = true;
@@ -86,8 +80,7 @@ public class Jq {
             assertTrue(inputOpt.isEmpty(), "Inplace mode accepts input from file not from stdin");
         }
         var cmd = new ArrayList<String>();
-        if (withSudo)
-            cmd.add("sudo");
+        sudo(cmd);
         cmd.add("jq");
         cmd.addAll(options);
         cmd.add(filter);
@@ -108,5 +101,10 @@ public class Jq {
                 Files.delete(tmpFile);
         }
         return proc;
+    }
+
+    @Override
+    protected Jq self() {
+        return this;
     }
 }
