@@ -7,6 +7,8 @@
  */
 package id.fireguard.tests;
 
+import static id.xfunction.XUtils.readResource;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -36,6 +38,17 @@ public class FireguardIntegrationTests {
             .toString();
     private Path fireguardHome;
     private Path config;
+
+    class Result {
+        String stdout;
+        String stderr;
+        XProcess proc;
+        public Result(XProcess proc) {
+            this.stdout = proc.stdoutAsString();
+            this.stderr = proc.stderrAsString();
+            this.proc = proc;
+        }
+    }
     
     @BeforeEach
     void setup() throws IOException {
@@ -68,83 +81,78 @@ public class FireguardIntegrationTests {
     }
 
     private void test_no_args() throws Exception {
-        Assertions.assertEquals(XUtils.readResource("README.md"),
+        Assertions.assertEquals(readResource("README.md"),
                 new XExec(FIREGUARD_PATH).run().stdoutAsString());
     }
     
     private void test_vm_showAll_empty() throws Exception {
         Assertions.assertEquals("",
-                run("vm showAll").stdoutAsString());
+                run("vm showAll").stdout);
     }
 
     private void test_vm_create() throws Exception {
-        var out = run("vm create").stdoutAsString();
-        System.out.println(out);
-        Assertions.assertTrue(new TemplateMatcher(XUtils.readResource(
+        var out = run("vm create").stdout;
+        Assertions.assertTrue(new TemplateMatcher(readResource(
                 getClass(), "vm-create")).matches(out));
     }
     
     private void test_vm_showAll() throws Exception {
-        run("vm create").stdout().forEach(System.out::println);
-        run("vm create").stdout().forEach(System.out::println);
-        var out = run("vm showAll").stdoutAsString();
-        System.out.println(out);
-        Assertions.assertTrue(new TemplateMatcher(XUtils.readResource(
+        run("vm create");
+        run("vm create");
+        var out = run("vm showAll").stdout;
+        Assertions.assertTrue(new TemplateMatcher(readResource(
                 getClass(), "vm-showAll")).matches(out));
     }
 
     private void test_vm_start() throws Exception {
-        var out1 = run("vm start vm-1").stdoutAsString();
-        System.out.println(out1);
-        var out2 = run("vm showAll").stdoutAsString();
-        System.out.println(out2);
+        var out1 = run("vm start vm-1").stdout;
+        var out2 = run("vm showAll").stdout;
         Assertions.assertEquals("Starting VM with id vm-1...\n", out1);
-        Assertions.assertTrue(new TemplateMatcher(XUtils.readResource(
+        Assertions.assertTrue(new TemplateMatcher(readResource(
                 getClass(), "vm-start")).matches(out2));
     }
 
     private void test_net_create() throws Exception {
-        var out = run("net create 10.1.2.0 255.255.255.0").stdoutAsString();
-        System.out.println(out);
-        Assertions.assertTrue(new TemplateMatcher(XUtils.readResource(
+        var out = run("net create 10.1.2.0 255.255.255.0").stdout;
+        Assertions.assertTrue(new TemplateMatcher(readResource(
                 getClass(), "net-create")).matches(out));
     }
 
     private void test_net_showAll() throws Exception {
-        var out = run("net showAll").stdoutAsString();
-        System.out.println(out);
-        Assertions.assertTrue(new TemplateMatcher(XUtils.readResource(
+        var out = run("net showAll").stdout;
+        Assertions.assertTrue(new TemplateMatcher(readResource(
                 getClass(), "net-showAll")).matches(out));
     }
     
     private void test_net_attach() {
-        var out = run("net attach vm-2 net-1").stdoutAsString();
-        System.out.println(out);
-        Assertions.assertTrue(new TemplateMatcher(XUtils.readResource(
+        var out = run("net attach vm-2 net-1").stdout;
+        Assertions.assertTrue(new TemplateMatcher(readResource(
                 getClass(), "net-attach")).matches(out));
     }
 
     private void test_vm_showAll_after_attach() {
-        var out = run("vm showAll").stdoutAsString();
-        System.out.println(out);
-        Assertions.assertTrue(new TemplateMatcher(XUtils.readResource(
+        var out = run("vm showAll").stdout;
+        Assertions.assertTrue(new TemplateMatcher(readResource(
                 getClass(), "vm-showAll-after-attach")).matches(out));
     }
 
     private void test_vm_stop() throws Exception {
-        var out1 = run("vm stop vm-1").stdoutAsString();
-        System.out.println(out1);
-        var out2 = run("vm showAll").stdoutAsString();
-        System.out.println(out2);
+        var out1 = run("vm stop vm-1").stdout;
+        var out2 = run("vm showAll").stdout;
         Assertions.assertEquals("Stopping VM with id vm-1...\n", out1);
-        Assertions.assertTrue(new TemplateMatcher(XUtils.readResource(
+        Assertions.assertTrue(new TemplateMatcher(readResource(
                 getClass(), "vm-showAll-after-stop")).matches(out2));
     }
 
-    private XProcess run(String args) {
-        var out = new XExec(FIREGUARD_PATH + " --config " + config.toString() + " " + args)
+    private Result run(String args) {
+        var proc = new XExec(FIREGUARD_PATH + " --config " + config.toString() + " " + args)
                 .run();
-        out.getCode();
-        return out;
+        var code = proc.getCode();
+        Result res = new Result(proc);
+        System.out.println(res.stdout);
+        System.err.println(res.stderr);
+        Assertions.assertEquals(0, code);
+        return res;
     }
+    
 }
