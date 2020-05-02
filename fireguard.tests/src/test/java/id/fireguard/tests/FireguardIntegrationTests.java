@@ -63,6 +63,7 @@ public class FireguardIntegrationTests {
         test_net_showAll();
         test_net_attach();
         test_vm_showAll_after_attach();
+        test_vm_stop();
     }
 
     private void test_no_args() throws Exception {
@@ -128,7 +129,17 @@ public class FireguardIntegrationTests {
         Assertions.assertTrue(new TemplateMatcher(XUtils.readResource(
                 getClass(), "vm-showAll-after-attach")).matches(out));
     }
-    
+
+    private void test_vm_stop() throws Exception {
+        var out1 = run("vm stop vm-1").run().stdoutAsString();
+        System.out.println(out1);
+        var out2 = run("vm showAll").run().stdoutAsString();
+        System.out.println(out2);
+        Assertions.assertEquals("Stopping VM with id vm-1...\n", out1);
+        Assertions.assertTrue(new TemplateMatcher(XUtils.readResource(
+                getClass(), "vm-showAll-after-stop")).matches(out2));
+    }
+
     private XExec run(String args) {
         return new XExec(FIREGUARD_PATH + " --config " + config.toString() + " " + args);
     }
