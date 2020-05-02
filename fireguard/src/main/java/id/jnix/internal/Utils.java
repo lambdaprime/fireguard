@@ -1,6 +1,5 @@
 package id.jnix.internal;
 
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import id.jnix.CommandExecutionException;
@@ -19,9 +18,4 @@ public class Utils {
 		}
 	}
 
-	public void sudo(boolean withSudo, List<String> cmd) {
-		if (withSudo) {
-			cmd.add("sudo");
-		}
-	}
 }
