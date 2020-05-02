@@ -7,14 +7,17 @@
  */
 package id.fireguard.net;
 
+import static java.lang.String.format;
+
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import id.fireguard.net.generators.IpGenerator;
 import id.xfunction.XObservable;
@@ -25,12 +28,18 @@ public class NetworkManager {
     private NetworkStore networkStore;
     private NetworkTransformer transformer;
     private NetworkManagerConfig config;
+    private NetworkInstaller intaller;
+    
     private XObservable<NetworkInterface> onAfterAttach = new XObservable<>();
 
-    protected NetworkManager(NetworkManagerConfig config, NetworkStore networkStore, NetworkTransformer transformer) {
+    protected NetworkManager(NetworkManagerConfig config,
+    		NetworkStore networkStore,
+    		NetworkTransformer transformer,
+    		NetworkInstaller intaller) {
         this.networkStore = networkStore;
         this.transformer = transformer;
         this.config = config;
+        this.intaller = intaller;
     }
 
     public Network create(String subnet, String netmask) {
@@ -96,5 +105,23 @@ public class NetworkManager {
                 .map(transformer::fromEntity)
                 .collect(Collectors.toList());
     }
+	
+    public NetworkInterface findIface(String ifaceId) {
+		Supplier<RuntimeException> supply = () ->
+			new RuntimeException("Not found net iface with id " + ifaceId);
+    	return networkStore.findIface(ifaceId)
+    			.map(transformer::fromEntity)
+    			.orElseThrow(supply);
+    }
 
+    public void onBeforeVmStart(String ifaceId) {
+        var iface = findIface(ifaceId);
+        var network = findAll().stream()
+            .filter(n -> n.getInterfaces().stream().filter(ni ->
+                ifaceId.equals(ni.getName())).findAny().isPresent())
+            .findAny()
+            .orElseThrow(() -> new RuntimeException(format("Could not find network for network iface with id %s",
+                    ifaceId)));
+        intaller.setup(network, iface);
+    }
 }

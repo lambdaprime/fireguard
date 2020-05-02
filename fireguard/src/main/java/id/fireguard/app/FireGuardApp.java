@@ -21,9 +21,10 @@ import java.util.Scanner;
 import java.util.function.Consumer;
 
 import id.fireguard.Settings;
+import id.fireguard.vmm.VirtualMachinesStore;
+import id.fireguard.net.NetworkManager;
 import id.fireguard.net.NetworkManagerBuilder;
 import id.fireguard.vmm.VirtualMachineManager;
-import id.fireguard.vmm.VirtualMachinesStore;
 import id.xfunction.CommandLineInterface;
 import id.xfunction.SmartArgs;
 
@@ -57,16 +58,22 @@ public class FireGuardApp {
         var cmd = positionalArgs.remove(0);
         switch (cmd) {
         case "vm": {
-            new VmCommand(createVmm(settings), cli).execute(positionalArgs);
+            var vmm = createVmm(settings);
+            vmm.addBeforeStartListener(createNm(settings)::onBeforeVmStart);
+            new VmCommand(vmm, cli).execute(positionalArgs);
             break;
         }
         case "net": {
-            var nm = new NetworkManagerBuilder(settings).create();
+            var nm = createNm(settings);
             nm.addOnAfterAttachListener(createVmm(settings)::onAttach);
             new NetCommand(nm, cli).execute(positionalArgs); break;
         }
         default: usage();
         }
+    }
+
+    private NetworkManager createNm(Settings settings) {
+        return new NetworkManagerBuilder(settings).create();
     }
 
     private VirtualMachineManager createVmm(Settings settings) {
