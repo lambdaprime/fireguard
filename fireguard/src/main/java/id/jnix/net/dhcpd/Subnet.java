@@ -7,13 +7,16 @@
  */
 package id.jnix.net.dhcpd;
 
+import java.io.Serializable;
 import java.net.InetAddress;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Subnet {
+public class Subnet implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+    
     InetAddress subnet;
     InetAddress netmask;
     List<Host> hosts = List.of();
