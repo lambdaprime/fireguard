@@ -7,7 +7,6 @@
  */
 module id.fireguard {
     requires id.xfunction;
-    requires com.google.gson;
 
     exports id.jnix;
     exports id.jnix.net.ip;
