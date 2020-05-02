@@ -13,11 +13,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import id.jnix.CommandExecutionException;
+import id.jnix.CommandHasSudo;
 import id.jnix.internal.Utils;
 import id.xfunction.XExec;
 import id.xfunction.XProcess;
 
-public class Ip {
+public class Ip extends CommandHasSudo<Ip> {
 
     public enum Status {
         up, down
@@ -28,16 +29,10 @@ public class Ip {
     }
 
     private Utils utils = new Utils();
-    private boolean withSudo;
-
-    public Ip withSudo() {
-        this.withSudo = true;
-        return this;
-    }
 
     public List<Address> address() throws CommandExecutionException {
         var cmd = new ArrayList<String>();
-        utils.sudo(withSudo, cmd);
+        sudo(cmd);
         cmd.add("ip");
         cmd.add("-br");
         cmd.add("address");
@@ -51,12 +46,16 @@ public class Ip {
     }
 
     public void addressAdd(String ifaceName, InetAddress address) throws CommandExecutionException {
+        addressAdd(ifaceName, address, 32);
+    }
+    
+    public void addressAdd(String ifaceName, InetAddress address, int mask) throws CommandExecutionException {
         var cmd = new ArrayList<String>();
-        utils.sudo(withSudo, cmd);
+        sudo(cmd);
         cmd.add("ip");
         cmd.add("address");
         cmd.add("add");
-        cmd.add(address.getHostAddress());
+        cmd.add(address.getHostAddress() + "/" + mask);
         cmd.add("dev");
         cmd.add(ifaceName);
         XProcess proc = new XExec(cmd)
@@ -66,7 +65,7 @@ public class Ip {
 
     public void tunTapAdd(String ifaceName, TunnelMode mode) throws CommandExecutionException {
         var cmd = new ArrayList<String>();
-        utils.sudo(withSudo, cmd);
+        sudo(cmd);
         cmd.add("ip");
         cmd.add("tuntap");
         cmd.add("add");
@@ -80,7 +79,7 @@ public class Ip {
 
     public void tunTapDel(String ifaceName, TunnelMode mode) throws CommandExecutionException {
         var cmd = new ArrayList<String>();
-        utils.sudo(withSudo, cmd);
+        sudo(cmd);
         cmd.add("ip");
         cmd.add("tuntap");
         cmd.add("del");
@@ -94,7 +93,7 @@ public class Ip {
 
     public void linkSet(String ifaceName, Status status) throws CommandExecutionException {
         var cmd = new ArrayList<String>();
-        utils.sudo(withSudo, cmd);
+        sudo(cmd);
         cmd.add("ip");
         cmd.add("link");
         cmd.add("set");
@@ -104,4 +103,10 @@ public class Ip {
                 .run();
         utils.verifyCode(proc);
     }
+
+    @Override
+    protected Ip self() {
+        return this;
+    }
+
 }
