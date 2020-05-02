@@ -7,8 +7,11 @@
  */
 package id.fireguard;
 
-import id.xfunction.XAsserts;
-import id.xfunction.function.Unchecked;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
+import id.xfunction.XUtils;
 
 public class Utils {
 
@@ -17,8 +20,11 @@ public class Utils {
         boolean isDestroyed = ph.destroy();
         if (!isDestroyed)
             isDestroyed = ph.destroyForcibly();
-        XAsserts.assertTrue(isDestroyed, "Could not terminate process " + ph.pid());
-        Unchecked.run(() -> ph.onExit().get());
+        try {
+            ph.onExit().get(1, TimeUnit.MINUTES);
+        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            XUtils.throwRuntime("Could not terminate process %d: %s", ph.pid(), e.getMessage());
+        }
     }
 
 }
