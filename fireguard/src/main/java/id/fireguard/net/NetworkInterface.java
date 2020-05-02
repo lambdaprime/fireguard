@@ -22,6 +22,7 @@ public class NetworkInterface {
     private InetAddress hostIp;
     private InetAddress vmIp;
     private MacAddress macAddress;
+    private short mask = 24;
 
     public NetworkInterface(String name, String vmId, InetAddress hostIp, InetAddress vmIp, MacAddress macAddress) {
         this.name = name;
@@ -51,6 +52,10 @@ public class NetworkInterface {
         return vmId;
     }
 
+    public short getMask() {
+        return mask;
+    }
+    
     @Override
     public String toString() {
         return format("{ name: %s, vmId: %s, hostIp: %s, vmIp: %s, macAddress: %s }",

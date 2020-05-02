@@ -13,28 +13,47 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
+import id.jnix.CommandExecutionException;
 import id.jnix.CommandHasSudo;
+import id.jnix.internal.Utils;
+import id.xfunction.XExec;
+import id.xfunction.XProcess;
 
-// Can't open /tmp/dhcpd105391253209477051: Permission denied
-// apparmor/selinux
-// sudo ln -s /etc/apparmor.d/usr.sbin.dhcpd /etc/apparmor.d/disable/
-// sudo apparmor_parser -R /etc/apparmor.d/usr.sbin.dhcpd 
+/**
+ * Requires sudo access to /etc/init.d/isc-dhcp-server
+ * and write permission to /etc/dhcp/dhcpd.conf
+ */
 public class Dhcpd extends CommandHasSudo<Dhcpd> {
 
-    public Process start(DhcpdConfig conf) throws Exception {
-        Path configFile = Paths.get(conf.getConfigLocation());
+    private static final Path configFile = Paths.get("/etc/dhcp/dhcpd.conf");
+    private Utils utils = new Utils();
+    
+    public Dhcpd() {
+        withSudo();
+    }
+    
+    public Process start(DhcpdConfig conf) throws CommandExecutionException, IOException {
         Files.write(configFile, conf.toString().getBytes());
-        return run(configFile);
+        return run("start").process();
     }
 
-    private Process run(Path configFile) throws IOException {
+    public void stop() throws CommandExecutionException {
+        run("stop");
+    }
+
+    public boolean isRunning() throws CommandExecutionException {
+        return run("status").getCode() == 0;
+    }
+
+    private XProcess run(String command) throws CommandExecutionException {
         var cmd = new ArrayList<String>();
         sudo(cmd);
-        cmd.add("dhcpd");
-        cmd.add("-cf");
-        cmd.add(configFile.toString());
-        var pb = new ProcessBuilder(cmd);
-        return pb.start();
+        cmd.add("/etc/init.d/isc-dhcp-server");
+        cmd.add(command);
+        XProcess proc = new XExec(cmd)
+                .run();
+        utils.verifyCode(proc);
+        return proc;
     }
 
     @Override
