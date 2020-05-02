@@ -19,6 +19,5 @@ module id.fireguard {
     exports id.fireguard.vmm to id.fireguard.tests;
     exports id.fireguard.vmm.vmconfig to id.fireguard.tests;
     exports id.fireguard.net to id.fireguard.tests;
-    exports id.fireguard.net.generators to id.fireguard.tests;
     opens id.fireguard.vmm.vmconfig to com.google.gson;
 }

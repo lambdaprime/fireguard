@@ -5,7 +5,7 @@
  * Website: https://github.com/lambdaprime
  * 
  */
-package id.fireguard.tests.net.generators;
+package id.fireguard.tests.net;
 
 import static java.net.InetAddress.getByName;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -18,11 +18,11 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import id.fireguard.net.generators.IpGenerator;
+import id.fireguard.net.IpPool;
 
-public class IpGeneratorTests extends IpGenerator {
+public class IpPoolTests extends IpPool {
 
-    public IpGeneratorTests() {
+    public IpPoolTests() {
         super(Set.of());
     }
 
@@ -58,7 +58,7 @@ public class IpGeneratorTests extends IpGenerator {
     @Test
     public void test_nextIp_from_1() throws Exception {
         Set<InetAddress> ipPool = Set.of(getByName("123.2.3.254"));
-        var actual = new IpGenerator(ipPool).newIp(getByName("123.2.3.0")).get().toString();
+        var actual = new IpPool(ipPool).newIp(getByName("123.2.3.0")).get().toString();
         assertEquals("/123.2.3.1", actual);
     }
 
@@ -67,7 +67,7 @@ public class IpGeneratorTests extends IpGenerator {
         Set<InetAddress> ipPool = Set.of(
                 getByName("123.2.3.1"),
                 getByName("123.2.3.254"));
-        var actual = new IpGenerator(ipPool).newIp(getByName("123.2.3.0")).get().toString();
+        var actual = new IpPool(ipPool).newIp(getByName("123.2.3.0")).get().toString();
         assertEquals("/123.2.3.2", actual);
     }
 
@@ -78,7 +78,7 @@ public class IpGeneratorTests extends IpGenerator {
                 getByName("123.2.3.3"),
                 getByName("123.2.3.2"),
                 getByName("123.2.3.1"));
-        var actual = new IpGenerator(ipPool).newIp(getByName("123.2.3.0")).get().toString();
+        var actual = new IpPool(ipPool).newIp(getByName("123.2.3.0")).get().toString();
         assertEquals("/123.2.3.5", actual);
     }
 
@@ -89,7 +89,7 @@ public class IpGeneratorTests extends IpGenerator {
                 getByName("123.2.3.3"),
                 getByName("123.2.3.2"),
                 getByName("123.2.3.1"));
-        var generator = new IpGenerator(ipPool);
+        var generator = new IpPool(ipPool);
         var actual = List.of(
                 generator.newIp(getByName("123.2.3.0")).get().toString(),
                 generator.newIp(getByName("123.2.3.0")).get().toString());

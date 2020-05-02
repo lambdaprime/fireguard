@@ -5,7 +5,7 @@
  * Website: https://github.com/lambdaprime
  * 
  */
-package id.fireguard.net.generators;
+package id.fireguard.net;
 
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
@@ -16,18 +16,18 @@ import java.util.stream.Collectors;
 
 import id.xfunction.function.Unchecked;
 
-public class IpGenerator {
+public class IpPool {
 
-    private Set<InetAddress> ips;
+    private Set<InetAddress> usedIps;
 
-    public IpGenerator(Set<InetAddress> ips) {
-        this.ips = new HashSet<>(ips);
+    public IpPool(Set<InetAddress> usedIps) {
+        this.usedIps = new HashSet<>(usedIps);
     }
 
     public Optional<InetAddress> newIp(InetAddress subnet) {
         var ip = inc(subnet);
         if (ip.isEmpty()) return Optional.empty();
-        var sorted = ips.stream()
+        var sorted = usedIps.stream()
                 .sorted(this::cmpIp)
                 .collect(Collectors.toList());
         var iter = sorted.iterator();
@@ -39,7 +39,7 @@ public class IpGenerator {
         if (!valid(subnet, ip.get())) {
             return Optional.empty();
         }
-        ips.add(ip.get());
+        usedIps.add(ip.get());
         return ip;
     }
 

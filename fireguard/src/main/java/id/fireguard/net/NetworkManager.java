@@ -19,7 +19,6 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import id.fireguard.net.generators.IpGenerator;
 import id.xfunction.XObservable;
 import id.xfunction.function.Unchecked;
 
@@ -74,7 +73,7 @@ public class NetworkManager {
                 .flatMap(ni -> Stream.of(ni.getHostIp(), ni.getVmIp()))
                 .collect(Collectors.toSet());
         var name = nextIfaceId();
-        var ipGen = new IpGenerator(ipPool);
+        var ipGen = new IpPool(ipPool);
         var hostIp = nextIp(ipGen, net.getSubnet());
         var vmIp = nextIp(ipGen, net.getSubnet());
         var mac = config.getLastUsedMacAddr().inc();
@@ -89,7 +88,7 @@ public class NetworkManager {
         onAfterAttach.addListener(listener);
     }
 
-    private InetAddress nextIp(IpGenerator ipGen, InetAddress subnet) {
+    private InetAddress nextIp(IpPool ipGen, InetAddress subnet) {
         var ip = ipGen.newIp(subnet);
         ip.orElseThrow(() -> new RuntimeException("Error generating new ip"));
         return ip.get();
