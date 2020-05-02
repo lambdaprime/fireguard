@@ -12,36 +12,36 @@ public class SubnetSection implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private InetAddress subnet;
-	private InetAddress netmask;
-	private List<Host> hosts = new ArrayList<>();
-	
-	public SubnetSection(InetAddress subnet, InetAddress netmask, Host...hosts) {
-		this.subnet = subnet;
-		this.netmask = netmask;
-		this.hosts.addAll(Arrays.asList(hosts));
-	}
+    private InetAddress netmask;
+    private List<Host> hosts = new ArrayList<>();
 
-	public InetAddress getSubnet() {
-		return subnet;
-	}
-	
-	public List<Host> getHosts() {
-		return hosts;
-	}
-	
-	public void addHost(Host host) {
-		hosts.add(host);
-	}
-	
-	public InetAddress getNetmask() {
-		return netmask;
-	}
-	
-	@Override
-	public String toString() {
-		return String.format("subnet %s netmask %s { %s }", subnet.getHostAddress(),
-				netmask.getHostAddress(),
-				hosts.stream().map(Host::toString)
-				.collect(Collectors.joining("\n")));
-	}
+    public SubnetSection(InetAddress subnet, InetAddress netmask, Host...hosts) {
+        this.subnet = subnet;
+        this.netmask = netmask;
+        this.hosts.addAll(Arrays.asList(hosts));
+    }
+
+    public InetAddress getSubnet() {
+        return subnet;
+    }
+
+    public List<Host> getHosts() {
+        return hosts;
+    }
+
+    public void addHost(Host host) {
+        hosts.add(host);
+    }
+
+    public InetAddress getNetmask() {
+        return netmask;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("subnet %s netmask %s { %s }", subnet.getHostAddress(),
+                netmask.getHostAddress(),
+                hosts.stream().map(Host::toString)
+                .collect(Collectors.joining("\n")));
+    }
 }

@@ -39,10 +39,10 @@ public class NetworkEntity implements Serializable {
         return netmask;
     }
 
-	public Set<NetworkInterfaceEntity> getIfaces() {
-		return ifaces;
-	}
-	
+    public Set<NetworkInterfaceEntity> getIfaces() {
+        return ifaces;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {

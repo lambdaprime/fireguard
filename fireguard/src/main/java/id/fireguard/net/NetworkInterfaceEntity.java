@@ -40,11 +40,11 @@ public class NetworkInterfaceEntity implements Serializable {
     public String getId() {
         return id;
     }
-	
+
     public void setId(String id) {
         this.id = id;
     }
-	
+
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {

@@ -7,16 +7,16 @@ import id.xfunction.XObservable;
 
 public class DhcpManagerConfig extends XObservable<DhcpManagerConfig> implements Serializable {
 
-	private static final long serialVersionUID = 1L;
-	
-	private DhcpdConfig dhcpdConfig = new DhcpdConfig();
-	
-	public DhcpdConfig getDhcpdConfig() {
-		return dhcpdConfig;
-	}
+    private static final long serialVersionUID = 1L;
 
-	public void updateDhcpdConfig(DhcpdConfig dhcpdConfig) {
-		this.dhcpdConfig = dhcpdConfig;
-		updateAll(this);
-	}
+    private DhcpdConfig dhcpdConfig = new DhcpdConfig();
+
+    public DhcpdConfig getDhcpdConfig() {
+        return dhcpdConfig;
+    }
+
+    public void updateDhcpdConfig(DhcpdConfig dhcpdConfig) {
+        this.dhcpdConfig = dhcpdConfig;
+        updateAll(this);
+    }
 }

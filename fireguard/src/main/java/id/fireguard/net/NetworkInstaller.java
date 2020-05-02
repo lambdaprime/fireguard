@@ -35,17 +35,17 @@ public class NetworkInstaller {
 
     private DhcpManager dhcpManager;
     private Settings settings;
-    
-	public NetworkInstaller(DhcpManager dhcpManager, Settings settings) {
+
+    public NetworkInstaller(DhcpManager dhcpManager, Settings settings) {
         this.dhcpManager = dhcpManager;
         this.settings = settings;
     }
 
     public boolean exist(String ifaceId) {
-		return Unchecked.getBoolean(() -> new Ip().address().stream()
-				.map(Address::getDeviceName)
-				.anyMatch(Predicate.isEqual(ifaceId)));
-	}
+        return Unchecked.getBoolean(() -> new Ip().address().stream()
+                .map(Address::getDeviceName)
+                .anyMatch(Predicate.isEqual(ifaceId)));
+    }
 
     public void setup(Network network, NetworkInterface iface) {
         Unchecked.run(() -> verify());

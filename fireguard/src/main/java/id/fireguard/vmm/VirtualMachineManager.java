@@ -82,7 +82,7 @@ public class VirtualMachineManager {
         if (socket.toFile().exists())
             throw new RuntimeException("Socket file exists: " + socket);
         vm.getVmConfig().getHostIface().ifPresent(onBeforeStart::updateAll);
-        
+
         var pb = new ProcessBuilder("screen",
                 "-S",
                 vmId,
@@ -104,10 +104,10 @@ public class VirtualMachineManager {
         return vm;
     }
 
-	public void addBeforeStartListener(Consumer<String> listener) {
-		onBeforeStart.addListener(listener);
-	}
-	
+    public void addBeforeStartListener(Consumer<String> listener) {
+        onBeforeStart.addListener(listener);
+    }
+
     public void stop(String vmId) {
         VirtualMachine vm = find(vmId);
         vm.getPid()
