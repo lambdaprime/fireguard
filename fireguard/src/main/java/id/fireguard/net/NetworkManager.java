@@ -28,13 +28,13 @@ public class NetworkManager {
     private NetworkTransformer transformer;
     private NetworkManagerConfig config;
     private NetworkInstaller intaller;
-    
+
     private XObservable<NetworkInterface> onAfterAttach = new XObservable<>();
 
     protected NetworkManager(NetworkManagerConfig config,
-    		NetworkStore networkStore,
-    		NetworkTransformer transformer,
-    		NetworkInstaller intaller) {
+            NetworkStore networkStore,
+            NetworkTransformer transformer,
+            NetworkInstaller intaller) {
         this.networkStore = networkStore;
         this.transformer = transformer;
         this.config = config;
@@ -98,19 +98,19 @@ public class NetworkManager {
         return networkStore.findNet(netId)
                 .map(transformer::fromEntity);
     }
-	
+
     public List<Network> findAll() {
         return networkStore.findAll().stream()
                 .map(transformer::fromEntity)
                 .collect(Collectors.toList());
     }
-	
+
     public NetworkInterface findIface(String ifaceId) {
-		Supplier<RuntimeException> supply = () ->
-			new RuntimeException("Not found net iface with id " + ifaceId);
-    	return networkStore.findIface(ifaceId)
-    			.map(transformer::fromEntity)
-    			.orElseThrow(supply);
+        Supplier<RuntimeException> supply = () ->
+            new RuntimeException("Not found net iface with id " + ifaceId);
+        return networkStore.findIface(ifaceId)
+                .map(transformer::fromEntity)
+                .orElseThrow(supply);
     }
 
     public void onBeforeVmStart(String ifaceId) {

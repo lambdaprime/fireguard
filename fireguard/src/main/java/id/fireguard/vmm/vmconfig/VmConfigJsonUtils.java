@@ -89,17 +89,17 @@ public class VmConfigJsonUtils {
     }
 
     private Optional<NetworkIface> readNetworkIface(Path location) throws Exception {
-    	var proc = new Jq()
+        var proc = new Jq()
             .withFile(location)
             .withFilter(".\"network-interfaces\"[0]| .\"guest_mac\",.\"host_dev_name\",.\"iface_id\"| select (.!=null)")
             .run();
-    	var out = new XProcess(proc).stdout().collect(toList());
-    	if (out.isEmpty()) return Optional.empty();
-    	XAsserts.assertTrue(out.size() == 3, "Unknown network-interfaces");
-    	return Optional.of(new NetworkIface(
-    			unquote(out.get(2)),
-    			unquote(out.get(0)),
-    			unquote(out.get(1))));
+        var out = new XProcess(proc).stdout().collect(toList());
+        if (out.isEmpty()) return Optional.empty();
+        XAsserts.assertTrue(out.size() == 3, "Unknown network-interfaces");
+        return Optional.of(new NetworkIface(
+                unquote(out.get(2)),
+                unquote(out.get(0)),
+                unquote(out.get(1))));
     }
 
     private MachineConfig readMachineConfig(Path location) throws Exception {

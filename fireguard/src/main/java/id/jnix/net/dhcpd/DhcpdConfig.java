@@ -17,34 +17,34 @@ import java.util.stream.Collectors;
 
 public class DhcpdConfig implements Serializable {
 
-	private static final long serialVersionUID = 1L;
-	
-	private Map<InetAddress, SubnetSection> subnets = new LinkedHashMap<>();
+    private static final long serialVersionUID = 1L;
 
-	public DhcpdConfig() {
-	    
-	}
+    private Map<InetAddress, SubnetSection> subnets = new LinkedHashMap<>();
 
-	public DhcpdConfig(SubnetSection subnet) {
-		this.subnets = Map.of(subnet.getSubnet(), subnet);
-	}
+    public DhcpdConfig() {
 
-	public void addSubnet(SubnetSection subnet) {
-		subnets.put(subnet.getSubnet(), subnet);
-	}
-	
-	public List<SubnetSection> getSubnets() {
-		return List.copyOf(subnets.values());
-	}
-	
-	public Optional<SubnetSection> getSubnet(InetAddress subnet) {
-		return Optional.ofNullable(subnets.get(subnet));
-	}
+    }
 
-	@Override
-	public String toString() {
-		return subnets.values().stream()
-				.map(SubnetSection::toString)
-				.collect(Collectors.joining("\n"));
-	}
+    public DhcpdConfig(SubnetSection subnet) {
+        this.subnets = Map.of(subnet.getSubnet(), subnet);
+    }
+
+    public void addSubnet(SubnetSection subnet) {
+        subnets.put(subnet.getSubnet(), subnet);
+    }
+
+    public List<SubnetSection> getSubnets() {
+        return List.copyOf(subnets.values());
+    }
+
+    public Optional<SubnetSection> getSubnet(InetAddress subnet) {
+        return Optional.ofNullable(subnets.get(subnet));
+    }
+
+    @Override
+    public String toString() {
+        return subnets.values().stream()
+                .map(SubnetSection::toString)
+                .collect(Collectors.joining("\n"));
+    }
 }

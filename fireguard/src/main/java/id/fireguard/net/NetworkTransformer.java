@@ -31,7 +31,7 @@ public class NetworkTransformer {
 
     public NetworkInterface fromEntity(NetworkInterfaceEntity ne) {
         var iface = new NetworkInterface(ne.getId(), ne.getVmId(), ne.getHostIp(),
-				ne.getVmIp(), ne.getMac());
+                ne.getVmIp(), ne.getMac());
         return iface;
     }
 
