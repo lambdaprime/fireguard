@@ -52,24 +52,37 @@ public class FireguardIntegrationTests {
         XUtils.deleteDir(fireguardHome);
     }
     
-    public void test_no_args() throws Exception {
+    @Test
+    public void test() throws Exception {
+        test_no_args();
+        test_vm_showAll_empty();
+        test_vm_create();
+        test_vm_showAll();
+        test_vm_start();
+        test_net_create();
+        test_net_showAll();
+        test_net_attach();
+        test_vm_showAll_after_attach();
+    }
+
+    private void test_no_args() throws Exception {
         Assertions.assertEquals(XUtils.readResource("README.md"),
                 new XExec(FIREGUARD_PATH).run().stdoutAsString());
     }
     
-    public void test_vm_showAll_empty() throws Exception {
+    private void test_vm_showAll_empty() throws Exception {
         Assertions.assertEquals("",
                 run("vm showAll").run().stdoutAsString());
     }
 
-    public void test_vm_create() throws Exception {
+    private void test_vm_create() throws Exception {
         var out = run("vm create").run().stdoutAsString();
         System.out.println(out);
         Assertions.assertTrue(new TemplateMatcher(XUtils.readResource(
                 getClass(), "vm-create")).matches(out));
     }
     
-    public void test_vm_showAll() throws Exception {
+    private void test_vm_showAll() throws Exception {
         run("vm create").run().stdout().forEach(System.out::println);
         run("vm create").run().stdout().forEach(System.out::println);
         var out = run("vm showAll").run().stdoutAsString();
@@ -78,7 +91,7 @@ public class FireguardIntegrationTests {
                 getClass(), "vm-showAll")).matches(out));
     }
 
-    public void test_vm_start() throws Exception {
+    private void test_vm_start() throws Exception {
         var out1 = run("vm start vm-1").run().stdoutAsString();
         System.out.println(out1);
         var out2 = run("vm showAll").run().stdoutAsString();
@@ -88,21 +101,32 @@ public class FireguardIntegrationTests {
                 getClass(), "vm-start")).matches(out2));
     }
 
-    public void test_net_create() throws Exception {
+    private void test_net_create() throws Exception {
         var out = run("net create 10.1.2.0 255.255.255.0").run().stdoutAsString();
         System.out.println(out);
         Assertions.assertTrue(new TemplateMatcher(XUtils.readResource(
                 getClass(), "net-create")).matches(out));
     }
+
+    private void test_net_showAll() throws Exception {
+        var out = run("net showAll").run().stdoutAsString();
+        System.out.println(out);
+        Assertions.assertTrue(new TemplateMatcher(XUtils.readResource(
+                getClass(), "net-showAll")).matches(out));
+    }
     
-    @Test
-    public void test() throws Exception {
-        test_no_args();
-        test_vm_showAll_empty();
-        test_vm_create();
-        test_vm_showAll();
-        test_vm_start();
-        test_net_create();
+    private void test_net_attach() {
+        var out = run("net attach vm-2 net-1").run().stdoutAsString();
+        System.out.println(out);
+        Assertions.assertTrue(new TemplateMatcher(XUtils.readResource(
+                getClass(), "net-attach")).matches(out));
+    }
+
+    private void test_vm_showAll_after_attach() {
+        var out = run("vm showAll").run().stdoutAsString();
+        System.out.println(out);
+        Assertions.assertTrue(new TemplateMatcher(XUtils.readResource(
+                getClass(), "vm-showAll-after-attach")).matches(out));
     }
     
     private XExec run(String args) {
