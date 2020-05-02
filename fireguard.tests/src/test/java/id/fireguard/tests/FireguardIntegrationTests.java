@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Test;
 
 import id.xfunction.TemplateMatcher;
 import id.xfunction.XExec;
+import id.xfunction.XProcess;
 import id.xfunction.XUtils;
 
 public class FireguardIntegrationTests {
@@ -73,29 +74,29 @@ public class FireguardIntegrationTests {
     
     private void test_vm_showAll_empty() throws Exception {
         Assertions.assertEquals("",
-                run("vm showAll").run().stdoutAsString());
+                run("vm showAll").stdoutAsString());
     }
 
     private void test_vm_create() throws Exception {
-        var out = run("vm create").run().stdoutAsString();
+        var out = run("vm create").stdoutAsString();
         System.out.println(out);
         Assertions.assertTrue(new TemplateMatcher(XUtils.readResource(
                 getClass(), "vm-create")).matches(out));
     }
     
     private void test_vm_showAll() throws Exception {
-        run("vm create").run().stdout().forEach(System.out::println);
-        run("vm create").run().stdout().forEach(System.out::println);
-        var out = run("vm showAll").run().stdoutAsString();
+        run("vm create").stdout().forEach(System.out::println);
+        run("vm create").stdout().forEach(System.out::println);
+        var out = run("vm showAll").stdoutAsString();
         System.out.println(out);
         Assertions.assertTrue(new TemplateMatcher(XUtils.readResource(
                 getClass(), "vm-showAll")).matches(out));
     }
 
     private void test_vm_start() throws Exception {
-        var out1 = run("vm start vm-1").run().stdoutAsString();
+        var out1 = run("vm start vm-1").stdoutAsString();
         System.out.println(out1);
-        var out2 = run("vm showAll").run().stdoutAsString();
+        var out2 = run("vm showAll").stdoutAsString();
         System.out.println(out2);
         Assertions.assertEquals("Starting VM with id vm-1...\n", out1);
         Assertions.assertTrue(new TemplateMatcher(XUtils.readResource(
@@ -103,44 +104,47 @@ public class FireguardIntegrationTests {
     }
 
     private void test_net_create() throws Exception {
-        var out = run("net create 10.1.2.0 255.255.255.0").run().stdoutAsString();
+        var out = run("net create 10.1.2.0 255.255.255.0").stdoutAsString();
         System.out.println(out);
         Assertions.assertTrue(new TemplateMatcher(XUtils.readResource(
                 getClass(), "net-create")).matches(out));
     }
 
     private void test_net_showAll() throws Exception {
-        var out = run("net showAll").run().stdoutAsString();
+        var out = run("net showAll").stdoutAsString();
         System.out.println(out);
         Assertions.assertTrue(new TemplateMatcher(XUtils.readResource(
                 getClass(), "net-showAll")).matches(out));
     }
     
     private void test_net_attach() {
-        var out = run("net attach vm-2 net-1").run().stdoutAsString();
+        var out = run("net attach vm-2 net-1").stdoutAsString();
         System.out.println(out);
         Assertions.assertTrue(new TemplateMatcher(XUtils.readResource(
                 getClass(), "net-attach")).matches(out));
     }
 
     private void test_vm_showAll_after_attach() {
-        var out = run("vm showAll").run().stdoutAsString();
+        var out = run("vm showAll").stdoutAsString();
         System.out.println(out);
         Assertions.assertTrue(new TemplateMatcher(XUtils.readResource(
                 getClass(), "vm-showAll-after-attach")).matches(out));
     }
 
     private void test_vm_stop() throws Exception {
-        var out1 = run("vm stop vm-1").run().stdoutAsString();
+        var out1 = run("vm stop vm-1").stdoutAsString();
         System.out.println(out1);
-        var out2 = run("vm showAll").run().stdoutAsString();
+        var out2 = run("vm showAll").stdoutAsString();
         System.out.println(out2);
         Assertions.assertEquals("Stopping VM with id vm-1...\n", out1);
         Assertions.assertTrue(new TemplateMatcher(XUtils.readResource(
                 getClass(), "vm-showAll-after-stop")).matches(out2));
     }
 
-    private XExec run(String args) {
-        return new XExec(FIREGUARD_PATH + " --config " + config.toString() + " " + args);
+    private XProcess run(String args) {
+        var out = new XExec(FIREGUARD_PATH + " --config " + config.toString() + " " + args)
+                .run();
+        out.getCode();
+        return out;
     }
 }
