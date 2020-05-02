@@ -30,7 +30,7 @@ public class FireguardIntegrationTests {
     private static final String ORIGIN_PATH = Paths.get("")
             .toAbsolutePath()
             .getParent()
-            .resolve("origin")
+            .resolve("origin/alpinelinux-3.8-kernel4.14")
             .toString();
     private static final String FIREGUARD_PATH = Paths.get("")
             .toAbsolutePath()
