@@ -1,14 +1,17 @@
 package id.jnix.net.dhcpd;
 
+import java.io.Serializable;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class SubnetSection {
+public class SubnetSection implements Serializable {
 
-	private InetAddress subnet;
+    private static final long serialVersionUID = 1L;
+
+    private InetAddress subnet;
 	private InetAddress netmask;
 	private List<Host> hosts = new ArrayList<>();
 	
