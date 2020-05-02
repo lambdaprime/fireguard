@@ -10,6 +10,7 @@ package id.jnix.net.ip;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import id.jnix.CommandExecutionException;
@@ -63,6 +64,46 @@ public class Ip extends CommandHasSudo<Ip> {
         utils.verifyCode(proc);
     }
 
+    public List<Route> route() throws CommandExecutionException {
+        var cmd = new ArrayList<String>();
+        sudo(cmd);
+        cmd.add("ip");
+        cmd.add("-br");
+        cmd.add("route");
+        XProcess proc = new XExec(cmd)
+                .run();
+        utils.verifyCode(proc);
+        return proc.stdout()
+                .map(Route::parse)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
+    }
+
+    public void routeAdd(Route route) throws CommandExecutionException {
+        var cmd = new ArrayList<String>();
+        sudo(cmd);
+        cmd.add("ip");
+        cmd.add("route");
+        cmd.add("add");
+        cmd.addAll(routeCommand(route));
+        XProcess proc = new XExec(cmd)
+                .run();
+        utils.verifyCode(proc);
+    }
+
+    public void routeDel(Route route) throws CommandExecutionException {
+        var cmd = new ArrayList<String>();
+        sudo(cmd);
+        cmd.add("ip");
+        cmd.add("route");
+        cmd.add("del");
+        cmd.addAll(routeCommand(route));
+        XProcess proc = new XExec(cmd)
+                .run();
+        utils.verifyCode(proc);
+    }
+
     public void tunTapAdd(String ifaceName, TunnelMode mode) throws CommandExecutionException {
         var cmd = new ArrayList<String>();
         sudo(cmd);
@@ -102,6 +143,14 @@ public class Ip extends CommandHasSudo<Ip> {
         XProcess proc = new XExec(cmd)
                 .run();
         utils.verifyCode(proc);
+    }
+
+    private List<String> routeCommand(Route route) {
+        var cmd = new ArrayList<String>();
+        cmd.add(route.getDestination() + "/" + route.getMask());
+        cmd.add("dev");
+        cmd.add(route.getDevice());
+        return cmd;
     }
 
     @Override

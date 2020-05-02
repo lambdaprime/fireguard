@@ -18,6 +18,7 @@ import id.jnix.net.ip.Address;
 import id.jnix.net.ip.Ip;
 import id.jnix.net.ip.Ip.Status;
 import id.jnix.net.ip.Ip.TunnelMode;
+import id.jnix.net.ip.Route;
 
 public class IpTests {
 
@@ -38,5 +39,21 @@ public class IpTests {
         ip.addressAdd(ifaceName, InetAddress.getByName("172.16.2.1"));
         ip.linkSet(ifaceName, Status.up);
         ip.tunTapDel(ifaceName, TunnelMode.tap);
+    }
+
+    @Test
+    public void test_route() throws Exception {
+        Ip ip = new Ip().withSudo();
+        var addr = InetAddress.getByName("11.16.2.1");
+        var iface = "lo";
+        Route route = new Route(addr.getHostAddress(), iface);
+        ip.routeAdd(route);
+        boolean isAdded = ip.route().stream()
+            .anyMatch(Predicate.isEqual(route));
+        ip.routeDel(route);
+        boolean isDeleted = ip.route().stream()
+                .noneMatch(Predicate.isEqual(route));
+        assertTrue(isAdded);
+        assertTrue(isDeleted);
     }
 }
