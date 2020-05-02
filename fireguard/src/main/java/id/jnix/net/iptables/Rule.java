@@ -18,6 +18,7 @@ public class Rule implements Serializable {
     private Optional<String> inIface = Optional.empty();
     private Optional<String> outIface = Optional.empty();
     private Optional<Module> module = Optional.empty();
+    private Optional<String> sourceAddr = Optional.empty();
     private Target target;
 
     public Rule(Chain chain, Target target) {
@@ -45,6 +46,11 @@ public class Rule implements Serializable {
         return this;
     }
     
+    public Rule withSource(String addr) {
+        sourceAddr = Optional.of(addr);
+        return this;
+    }
+    
     public Optional<Table> getTable() {
         return table;
     }
@@ -69,4 +75,7 @@ public class Rule implements Serializable {
         return module;
     }
     
+    public Optional<String> getSourceAddr() {
+        return sourceAddr;
+    }
 }
