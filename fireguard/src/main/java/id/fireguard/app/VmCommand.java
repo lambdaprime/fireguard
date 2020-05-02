@@ -33,9 +33,9 @@ public class VmCommand implements Command {
     }
 
     private void stopAll() {
-        vmm.findAll()
-            .stream()
+        vmm.findAll().stream()
             .map(VirtualMachine::getId)
+            .sorted()
             .forEach(this::stop);
     }
 
