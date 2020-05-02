@@ -79,6 +79,9 @@ public class FireguardIntegrationTests {
         test_vm_showAll_after_attach();
         test_vm_stop();
         test_vm_startAll();
+        test_vm_showAll_after_startAll();
+        test_vm_stopAll_after_startAll();
+        test_vm_showAll_after_stopAll();
     }
 
     private void test_no_args() throws Exception {
@@ -149,6 +152,24 @@ public class FireguardIntegrationTests {
         var proc = run("vm startAll");
         Assertions.assertTrue(new TemplateMatcher(readResource(
                 getClass(), "vm-startAll")).matches(proc.stdout));
+    }
+
+    private void test_vm_showAll_after_startAll() throws Exception {
+        var proc = run("vm showAll");
+        Assertions.assertTrue(new TemplateMatcher(readResource(
+                getClass(), "vm-showAll-after-startAll")).matches(proc.stdout));
+    }
+
+    private void test_vm_stopAll_after_startAll() throws Exception {
+        var proc = run("vm stopAll");
+        Assertions.assertTrue(new TemplateMatcher(readResource(
+                getClass(), "vm-stopAll-after-startAll")).matches(proc.stdout));
+    }
+
+    private void test_vm_showAll_after_stopAll() throws Exception {
+        var proc = run("vm showAll");
+        Assertions.assertTrue(new TemplateMatcher(readResource(
+                getClass(), "vm-showAll-after-stopAll")).matches(proc.stdout));
     }
 
     private Result run(String args) {
