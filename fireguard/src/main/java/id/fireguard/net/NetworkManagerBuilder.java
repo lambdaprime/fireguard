@@ -21,8 +21,24 @@ public class NetworkManagerBuilder {
     public NetworkManager create() {
         var networkStore = new NetworkStore(settings.getNetStore());
         var config = retrieveConfig();
-        NetworkManager nm = new NetworkManager(config, networkStore, new NetworkTransformer());
+        var dhcpManager = createDhcpManager();
+        NetworkManager nm = new NetworkManager(
+                config,
+                networkStore,
+                new NetworkTransformer(),
+                new NetworkInstaller(dhcpManager, settings)
+                );
         return nm;
+    }
+
+    private DhcpManager createDhcpManager() {
+        var store = new ObjectStore<DhcpManagerConfig>(
+                settings.getConfigsLocation().resolve("dhcpManagerConfig"));
+        var config = store.load()
+                .orElse(new DhcpManagerConfig());
+        config.addListener(cfg -> 
+        store.save(cfg));
+        return new DhcpManager(config);
     }
 
     private NetworkManagerConfig retrieveConfig() {

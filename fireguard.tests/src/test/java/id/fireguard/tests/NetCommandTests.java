@@ -14,8 +14,10 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import id.fireguard.Settings;
 import id.fireguard.app.CommandIllegalArgumentException;
 import id.fireguard.app.NetCommand;
+import id.fireguard.net.NetworkInstaller;
 import id.fireguard.net.NetworkManager;
 import id.fireguard.net.NetworkManagerConfig;
 import id.fireguard.net.NetworkStore;
@@ -31,7 +33,8 @@ public class NetCommandTests {
         protected NetworkManagerMock() {
             super(new NetworkManagerConfig(),
                     new NetworkStore(new ObjectStoreMock<>()),
-                    new NetworkTransformer());
+                    new NetworkTransformer(),
+                    new NetworkInstaller(null, new Settings()));
         }
     }
 
