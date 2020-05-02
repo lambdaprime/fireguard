@@ -39,6 +39,11 @@ public class IpPoolTests extends IpPool {
 
         actual = inc(getByName("123.2.254.253")).get().toString();
         assertEquals("/123.2.254.254", actual);
+
+        actual = inc(getByName("254.254.254.254"))
+                .map(Object::toString)
+                .orElse(null);
+        assertEquals(null, actual);
     }
 
     @Test
