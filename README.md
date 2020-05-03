@@ -1,11 +1,6 @@
-fireguard - Firecracker MicroVMs management application
+**fireguard** - Firecracker MicroVMs management application. It manages VMs lifecycle (create/start/stop) and can setup a network between them so that VMs can communicate with each other as well as with host system. **fireguard** configures NAT so that VMs can have an access to the external network (Internet). It manages dhcpd, iptables and routing tables so that you don't need to setup them yourself.
 
 lambdaprime <id.blackmesa@gmail.com>
-
-# Documentation
-
-* [Quick Start](/docs/QuickStart.md)
-* [How to create new origin image](/docs/CreateNewImage.md)
 
 # Requirements
 
@@ -14,7 +9,7 @@ lambdaprime <id.blackmesa@gmail.com>
 - firecracker v0.20.0
 - jq-1.5-1-a5b5cbe
 - isc-dhcp-server 4.4.1
-* iproute2
+- iproute2
 
 Requires NOPASSWD sudo access to:
 
@@ -25,6 +20,11 @@ Requires NOPASSWD sudo access to:
 # Download
 
 You can download **fireguard** from <https://github.com/lambdaprime/fireguard/tree/master/fireguard/release>
+
+# Documentation
+
+* [Quick Start](/docs/QuickStart.md)
+* [How to create new origin image](/docs/CreateNewImage.md)
 
 # Configuration
 
@@ -39,7 +39,7 @@ Where:
 
 ORIGIN\_VM\_LOCATION -- directory with original VM. It should be self sufficient and include everything what is needed to run a VM (kernel, vm_config.json, etc). See Quick Start for more details.
 
-HOST\_IFACE -- host OS external network interface name (so VMs can access Internet)
+HOST\_IFACE -- host system external network interface name (so VMs can access Internet)
 
 # Usage
 
@@ -48,6 +48,7 @@ fireguard [ --config CONFIG_FILE ]  <COMMAND>
 ```
 
 CONFIG_FILE is a path to **fireguard** config file (default is ~/.fireguard)
+
 COMMAND is one of the following: vm, net
 
 ## vm
@@ -56,11 +57,11 @@ vm command accepts following arguments:
 
 - create [JQ\_EXPRESSION] -- create a new VM by copying ORIGIN to a STAGE. If JQ_EXPRESSION is given then update its vm\_config.json with accordance to it.
 - showAll -- show information about all available VMs
+- start VM\_ID -- start a VM with given id. Once VM is started its console available through screen utility
+- stop VM\_ID -- stop a VM with given id
 - startAll -- start all VMs
 - stopAll -- stop all VMs (right now it is done by killing the process)
 - restart VM\_ID -- restart VM with given id
-- start VM\_ID -- start a VM with given id
-- stop VM\_ID -- stop a VM with given id
 
 Where:
 
@@ -108,6 +109,12 @@ Start a VM:
 % fireguard vm start vm-1
 Starting VM with id vm-1...
 %
+```
+
+Connect to the VM console:
+
+```bash
+% screen -r vm-1
 ```
 
 Show all available VMs:
@@ -174,6 +181,7 @@ ifaces: []
 Attach vm-1 to network net-1
 
 ```bash
-% fireguard net attach vm-1 net-1            
+% fireguard net attach vm-1 net-1
 Attaching vm-1 to net-1 network...
+%
 ```

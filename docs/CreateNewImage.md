@@ -1,54 +1,75 @@
-This document explains how to create a new Firecracker image for **Fireguard** based on Ubuntu.
+This document explains how to create a new Firecracker image based on Ubuntu for **fireguard**.
 
-1. Create ubuntu folder for new origin image and cd in it
+Create ubuntu folder for new origin image and cd in it
+
 ```bash
 mkdir ubuntu
 cd ubuntu
 ```
-1. Create empty 1GB image
+
+Create empty 1GB image
+
 ```bash
 dd if=/dev/zero of=./ubuntu.ext4 bs=1MB count=1000
 mkfs.ext4 ./ubuntu.ext4
 ```
-1. Mount it
+
+Mount it
+
 ```bash
 sudo mount ./ubuntu.ext4 /media
 ```
-1. Download Ubuntu qemu image (it has compiled kernel with KVM support)
+
+Download Ubuntu qemu image (it has compiled kernel with KVM support)
+
 ```bash
 wget http://cloud-images.ubuntu.com/minimal/releases/eoan/release/ubuntu-19.10-minimal-cloudimg-amd64.img
 ```
-1. Convert to raw
+
+Convert to raw
+
 ```bash
 qemu-img convert -p -O raw ubuntu-19.10-minimal-cloudimg-amd64.img ubuntu-19.10-minimal-cloudimg-amd64.raw
 ```
-1. Mount raw volume image:
+
+Mount raw volume image
+
 ```bash
 losetup /dev/loop0 ubuntu-19.10-minimal-cloudimg-amd64.raw
 sudo kpartx -a /dev/loop0
 sudo mount /dev/mapper/loop0p1 /mnt
 ```
-1. Copy all data from volume image to ext image
+
+Copy all data from volume image to ext image
+
 ```bash
 sudo cp -rfp /mnt/* /media/cdrom
 ```
-1. Uncompress the kernel
+
+Uncompress the kernel
+
 ```bash
 wget https://raw.githubusercontent.com/torvalds/linux/master/scripts/extract-vmlinux
 chmod u+x extract-vmlinux
 sudo ./extract-vmlinux /mnt/boot/vmlinuz-5.3.0-1016-kvm > vmlinux-5.3.0-1016-kvm
 ```
-1. Unmount volume image
+
+Unmount volume image
+
 ```bash
 sudo umount /mnt
 sudo kpartx -d /dev/loop0
 losetup -d /dev/loop0
 ```
-1. Unmount ext image
+
+Unmount ext image
+
 ```bash
 sudo umount /media/cdrom
 ```
-1. Create vm_config.json
+
+Create vm_config.json
+
 ```bash
 cat > vm_config.json <<EOF
 {
@@ -79,18 +100,20 @@ cat > vm_config.json <<EOF
 }
 EOF
 ```
+
 Then run it
+
 ```bash
 rm /tmp/firecracker.sock; firecracker --api-sock /tmp/firecracker.sock --config-file vm_config.json
 ```
 
 Once you are ready clean up the files:
 
-```
+```bash
 rm extract-vmlinux *img *ra
 ```
 
-Your Ubuntu origin image is ready, now you can configure **Fireguard** to use it.
+Your Ubuntu origin image is ready, now you can configure **fireguard** to use it.
 
 # How to reset password
 
@@ -119,4 +142,3 @@ network:
             optional: true
 EOF
 ```
-
