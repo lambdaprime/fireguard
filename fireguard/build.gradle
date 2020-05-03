@@ -54,9 +54,8 @@ task createRelease(type: Copy) {
     from jar.archiveFile
     from file("$projectDir/libs")
     from "${project.rootDir}/README.md"
-    from "${project.rootDir}/QuickStart.md"
+    from "${project.rootDir}/docs"
     from "$projectDir/src/fireguard"
-    from "$projectDir/src/setup_netiface.sh"
     into releaseDir
 }
 

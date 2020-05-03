@@ -2,9 +2,10 @@ fireguard - Firecracker MicroVMs management application
 
 lambdaprime <id.blackmesa@gmail.com>
 
-# Quick Start
+# Documentation
 
-See [Quick Start](/QuickStart.md) for more details.
+* [Quick Start](/docs/QuickStart.md)
+* [How to create new origin image](/docs/CreateNewImage.md)
 
 # Requirements
 
@@ -13,38 +14,40 @@ See [Quick Start](/QuickStart.md) for more details.
 - firecracker v0.20.0
 - jq-1.5-1-a5b5cbe
 - isc-dhcp-server 4.4.1
+* iproute2
+
+Requires NOPASSWD sudo access to:
+
+* ip
+* iptables
+* isc-dhcp-server
 
 # Download
 
-You can download **fireguard** from <https://github.com/lambdaprime/fireguard/tree/master/release>
+You can download **fireguard** from <https://github.com/lambdaprime/fireguard/tree/master/fireguard/release>
 
 # Configuration
 
 Before using **fireguard** make sure to create configuration file .fireguard and place it in your $HOME location:
 
 ```
-store = <STORE_LOCATION>
 originVm = <ORIGIN_VM_LOCATION>
-stage = <STAGE_LOCATION>
-firecracker = <FIRECRACKER_LOCATION>
+hostIface = <HOST_IFACE>
 ```
 
 Where:
 
-STORE\_LOCATION -- directory where **fireguard** will keep metadata about VMs
-
 ORIGIN\_VM\_LOCATION -- directory with original VM. It should be self sufficient and include everything what is needed to run a VM (kernel, vm_config.json, etc). See Quick Start for more details.
 
-STAGE_LOCATION -- directory where **fireguard** will store all managed VMs (each VM will be stored in its own subdirectory)
-
-FIRECRACKER\_LOCATION -- path to Firecracker
+HOST\_IFACE -- host OS external network interface name (so VMs can access Internet)
 
 # Usage
 
 ```bash
-fireguard <COMMAND>
+fireguard [ --config CONFIG_FILE ]  <COMMAND>
 ```
 
+CONFIG_FILE is a path to **fireguard** config file (default is ~/.fireguard)
 COMMAND is one of the following: vm, net
 
 ## vm
@@ -56,7 +59,6 @@ vm command accepts following arguments:
 - startAll -- start all VMs
 - stopAll -- stop all VMs (right now it is done by killing the process)
 - restart VM\_ID -- restart VM with given id
-- update VM\_ID JQ\_EXPRESSION -- update vm\_config.json using jq with JQ\_EXPRESSION
 - start VM\_ID -- start a VM with given id
 - stop VM\_ID -- stop a VM with given id
 
@@ -76,10 +78,8 @@ net command accepts following arguments:
 ## Configuration file
 
 ```
-store = /home/ubuntu/vms/store
-originVm = /home/ubuntu/opt/mysql.origin
-stage = /home/ubuntu/vms/stage
-firecracker = /home/ubuntu/opt/firecracker/firecracker-v0.20.0-x86_64
+originVm = /home/ubuntu/vms/alpinelinux-3.8-kernel4.14
+hostIface = enp0s3
 ```
 
 ## Usage
@@ -87,15 +87,15 @@ firecracker = /home/ubuntu/opt/firecracker/firecracker-v0.20.0-x86_64
 Create new VM:
 
 ```bash 
-% fireguard vm create '."network-interfaces"[0].guest_mac = "AA:FC:00:00:00:01" | ."network-interfaces"[0].host_dev_name = "tap1"'
+% fireguard vm create 
 Creating new VM...
 id: vm-1
-home folder: /home/ubuntu/vms/stage/vm-1
-socket: /home/ubuntu/vms/stage/vm-1/firecracker.sock
+home folder: /home/ubuntu/fireguardHome/stage/vm-1
+socket: /home/ubuntu/fireguardHome/stage/vm-1/firecracker.sock
 state: STOPPED
 pid: Optional.empty
-vmConfig: path: /home/ubuntu/vms/stage/vm-1/vm_config.json
-memoryGb: 8
+vmConfig: path: /home/ubuntu/fireguardHome/stage/vm-1/vm_config.json
+memoryGb: 1000
 vcpu: 1
 hostIface: Optional.empty
 mac: Optional.empty
@@ -113,7 +113,7 @@ Starting VM with id vm-1...
 Show all available VMs:
 
 ```bash
-% fireguard vm showAll   
+% fireguard vm showAll
 id: vm-2
 home folder: /home/ubuntu/vms/stage/vm-2
 socket: /home/ubuntu/vms/stage/vm-2/firecracker.sock
@@ -142,9 +142,11 @@ mac: Optional.empty
 Start all VMs:
  
 ```bash
-% fireguard vm startAll  
-Starting VM with id vm-2...
+% fireguard vm startAll
 Starting VM with id vm-1...
+
+Starting VM with id vm-2...
+
 %
 ```
 
@@ -155,4 +157,23 @@ Restart VM:
 Stopping VM with id vm-1...
 Starting VM with id vm-1...
 %
+```
+
+Create network
+ 
+```bash
+% fireguard net create 10.1.2.0 255.255.255.0
+Creating new network...
+id: net-1
+subnet: /10.1.2.0
+netmask: /255.255.255.0
+ifaces: []
+%
+```
+
+Attach vm-1 to network net-1
+
+```bash
+% fireguard net attach vm-1 net-1            
+Attaching vm-1 to net-1 network...
 ```
