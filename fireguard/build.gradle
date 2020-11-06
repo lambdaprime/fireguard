@@ -68,7 +68,7 @@ assemble.dependsOn packageDistribution
 clean.dependsOn cleanRelease
 
 task copyReadme(type: Copy) {
-    from("$projectDir/README.md")
+    from("${project.rootDir}/README.md")
     into("$projectDir/src/main/resources")
 }
 
