@@ -1,25 +1,26 @@
-// gradle clean test
-
 plugins {
-    id 'java'
+  id 'com.diffplug.spotless'
+  id 'jacoco'
 }
 
-apply plugin : 'eclipse'
-
-repositories {
-    mavenCentral()
-    mavenLocal()
+eclipse.classpath.file {
+  // instruct eclipse plugin to put everything to module path
+  whenMerged {
+    entries.findAll { it.kind == 'lib' }.each { it.entryAttributes['module'] = 'true' }
+  }
 }
 
 dependencies {
-    testImplementation project(':fireguard')
-    testImplementation('org.junit.jupiter:junit-jupiter-api:5.4.2')
-    testImplementation('org.junit.jupiter:junit-jupiter-params:5.4.2')
-    testRuntime('org.junit.jupiter:junit-jupiter-engine:5.4.2')
+  testImplementation project(':fireguard')
+  testImplementation "io.github.lambdaprime:id.xfunction:20.0"
+
+  def junitVersion = "5.8.1"
+  testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
+  testImplementation "org.junit.jupiter:junit-jupiter-params:${junitVersion}"
+  testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
+  testRuntimeOnly "org.junit.platform:junit-platform-commons:1.7.0"
 }
 
-sourceCompatibility = '11'
-targetCompatibility = '11'
 
 String testDir = "$buildDir/fireguard"
 String testSrcDir = "$projectDir/src/test"
@@ -31,20 +32,57 @@ task myTest(type: Copy) {
     into "$buildDir"
 }
 
-compileTestJava {
-    doFirst {
-        options.compilerArgs = [
-            '--module-path', classpath.asPath,
-        ]
-        classpath = files()
-    }
+jacoco {
+  // Java 17 support
+  toolVersion = "0.8.7"
 }
 
 test {
-    useJUnitPlatform()
-    filter {
-        exclude '**/module-info.class'
-    }
+  useJUnitPlatform()
+  finalizedBy jacocoTestReport, jacocoTestCoverageVerification
+
+  testLogging {
+    events "started", "failed"
+  }
 }
 
-test.dependsOn myTest
+jacocoTestReport {
+  // generate only HTML report
+  reports {
+    xml.required = false
+    csv.required = false
+    html.required = true
+  }
+  sourceDirectories.from = project(':fireguard').sourceSets.main.java.srcDirs
+  classDirectories.from = project(':fireguard').sourceSets.main.java.classesDirectory
+}
+
+jacocoTestCoverageVerification {
+  sourceDirectories.from = project(':fireguard').sourceSets.main.java.srcDirs
+  classDirectories.from = project(':fireguard').sourceSets.main.java.classesDirectory
+  afterEvaluate {
+    classDirectories.setFrom(files(classDirectories.files.collect {
+      fileTree(dir: it, exclude:  [
+        // none
+      ])
+    }))
+  }
+  violationRules {
+    rule {
+      enabled = true
+      element = 'PACKAGE'
+      limit {
+        counter = 'LINE'
+        value = 'COVEREDRATIO'
+        minimum = 0.1
+      }
+    }
+  }
+}
+
+jar.dependsOn myTest
+compileTestJava.dependsOn myTest
+myTest.dependsOn project(':fireguard').createRelease
+
+// run spotless and format code before the build
+testClasses.dependsOn spotlessApply

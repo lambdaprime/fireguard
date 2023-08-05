@@ -1,18 +1,24 @@
-/**
- * Copyright 2020 lambdaprime
+/*
+ * Copyright 2020 fireguard project
  * 
- * Email: id.blackmesa@gmail.com 
- * Website: https://github.com/lambdaprime
+ * Website: https://github.com/lambdaprime/fireguard
  * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package id.fireguard.net;
 
 import static id.jnix.net.iptables.Conntrack.State.ESTABLISHED;
 import static id.jnix.net.iptables.Conntrack.State.RELATED;
-
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.function.Predicate;
 
 import id.fireguard.Settings;
 import id.jnix.CommandExecutionException;
@@ -28,9 +34,15 @@ import id.jnix.net.iptables.IpTables;
 import id.jnix.net.iptables.Rule;
 import id.jnix.net.iptables.Table;
 import id.jnix.net.iptables.Target;
-import id.xfunction.XAsserts;
+import id.xfunction.Preconditions;
 import id.xfunction.function.Unchecked;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.function.Predicate;
 
+/**
+ * @author lambdaprime intid@protonmail.com
+ */
 public class NetworkInstaller {
 
     private DhcpManager dhcpManager;
@@ -42,9 +54,12 @@ public class NetworkInstaller {
     }
 
     public boolean exist(String ifaceId) {
-        return Unchecked.getBoolean(() -> new Ip().address().stream()
-                .map(Address::getDeviceName)
-                .anyMatch(Predicate.isEqual(ifaceId)));
+        return Unchecked.getBoolean(
+                () ->
+                        new Ip()
+                                .address().stream()
+                                        .map(Address::getDeviceName)
+                                        .anyMatch(Predicate.isEqual(ifaceId)));
     }
 
     public void setup(Network network, NetworkInterface iface) {
@@ -63,14 +78,12 @@ public class NetworkInstaller {
         var ip = new Ip().withSudo();
         var routeToHost = new Route(iface.getHostIp().getHostAddress(), iface.getName());
         List<Route> routes = ip.route();
-        if (routes.stream()
-                .noneMatch(Predicate.isEqual(routeToHost))) {
+        if (routes.stream().noneMatch(Predicate.isEqual(routeToHost))) {
             System.out.println("Adding new route: " + routeToHost);
             ip.routeAdd(routeToHost);
         }
         var routeToVm = new Route(iface.getVmIp().getHostAddress(), iface.getName());
-        if (routes.stream()
-                .noneMatch(Predicate.isEqual(routeToVm))) {
+        if (routes.stream().noneMatch(Predicate.isEqual(routeToVm))) {
             ip.routeAdd(routeToVm);
             System.out.println("Adding new route: " + routeToVm);
         }
@@ -81,15 +94,13 @@ public class NetworkInstaller {
         var iptables = new IpTables().withSudo();
         Rule[] rules = {
             new Rule(Chain.POSTROUTING, Target.MASQUERADE)
-                .withTable(Table.nat)
-                .withOutIface(settings.getHostIface()),
+                    .withTable(Table.nat)
+                    .withOutIface(settings.getHostIface()),
             new Rule(Chain.FORWARD, Target.ACCEPT)
-                .withModule(new Conntrack()
-                        .withStates(List.of(RELATED, ESTABLISHED))),
+                    .withModule(new Conntrack().withStates(List.of(RELATED, ESTABLISHED))),
         };
-        for (Rule r: rules) {
-            if (!iptables.isPresent(r))
-                iptables.add(r);
+        for (Rule r : rules) {
+            if (!iptables.isPresent(r)) iptables.add(r);
         }
     }
 
@@ -108,10 +119,11 @@ public class NetworkInstaller {
     private void verify() throws CommandExecutionException {
         var procfs = new ProcFs();
         var propName = "/proc/sys/net/ipv4/ip_forward";
-        XAsserts.assertTrue(procfs.readInt(Paths.get(propName)) == 1,
+        Preconditions.isTrue(
+                procfs.readInt(Paths.get(propName)) == 1,
                 "Please enable forwarding in " + propName);
         propName = "/proc/sys/net/ipv4/conf/all/proxy_arp";
-        XAsserts.assertTrue(procfs.readInt(Paths.get(propName)) == 1,
-                "Please enable ARP proxy in " + propName);
+        Preconditions.isTrue(
+                procfs.readInt(Paths.get(propName)) == 1, "Please enable ARP proxy in " + propName);
     }
 }

@@ -43,6 +43,7 @@ RUN usermod -a -G dhcpd ubuntu
 RUN echo "%sudo   ALL=(ALL:ALL) ALL" >> /etc/sudoers
 RUN echo "ubuntu    ALL = NOPASSWD: /usr/bin/ip" >> /etc/sudoers
 RUN echo "ubuntu    ALL = NOPASSWD: /usr/sbin/iptables" >> /etc/sudoers
+RUN echo "ubuntu    ALL = NOPASSWD: /etc/init.d/isc-dhcp-server" >> /etc/sudoers
 RUN chown root:dhcpd /etc/dhcp/dhcpd.conf
 RUN chmod 664 /etc/dhcp/dhcpd.conf
 RUN echo 'INTERFACESv4="tap1"' > /etc/default/isc-dhcp-server

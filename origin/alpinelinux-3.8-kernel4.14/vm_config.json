@@ -17,7 +17,7 @@
     ],
     "machine-config": {
         "vcpu_count": 1,
-        "mem_size_mib": 1000,
+        "mem_size_mib": 200,
         "ht_enabled": true
     },
     "actions": {

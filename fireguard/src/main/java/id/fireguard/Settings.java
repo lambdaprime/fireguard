@@ -1,15 +1,24 @@
-/**
- * Copyright 2020 lambdaprime
+/*
+ * Copyright 2020 fireguard project
  * 
- * Email: id.blackmesa@gmail.com 
- * Website: https://github.com/lambdaprime
+ * Website: https://github.com/lambdaprime/fireguard
  * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package id.fireguard;
 
-import static id.xfunction.XUtils.throwRuntime;
-import static id.xfunction.XAsserts.assertNotNull;
-
+import id.xfunction.Preconditions;
+import id.xfunction.lang.XRE;
 import java.io.File;
 import java.io.FileInputStream;
 import java.nio.file.Path;
@@ -17,6 +26,9 @@ import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.Properties;
 
+/**
+ * @author lambdaprime intid@protonmail.com
+ */
 public class Settings {
 
     private static String userHome = System.getProperty("user.home");
@@ -33,7 +45,7 @@ public class Settings {
     }
 
     public static Settings load(Optional<Path> configPath) throws Exception {
-        return load(configPath.orElse(Paths.get(userHome , ".fireguard")));
+        return load(configPath.orElse(Paths.get(userHome, ".fireguard")));
     }
 
     private static Settings load(Path configFile) throws Exception {
@@ -47,7 +59,8 @@ public class Settings {
         settings.stage = initLocation(fireguardHome, "stage");
         settings.hostIface = defaultProps.getProperty("hostIface");
         settings.configsLocation = initLocation(fireguardHome, "configs");
-        assertNotNull(settings.hostIface, "Wrong config file. Property 'hostIface' is missing.");
+        Preconditions.notNull(
+                settings.hostIface, "Wrong config file. Property 'hostIface' is missing.");
         return settings;
     }
 
@@ -59,7 +72,7 @@ public class Settings {
 
     private static Path getFireguardHome(Properties props) {
         String home = props.getProperty("fireguardHome", userHome + "/fireguardHome");
-        assertNotNull(home, "Wrong config file. Property 'fireguardHome' is missing.");
+        Preconditions.notNull(home, "Wrong config file. Property 'fireguardHome' is missing.");
         var path = Paths.get(home);
         path.toFile().mkdirs();
         return path;
@@ -69,7 +82,9 @@ public class Settings {
         Properties defaultProps = new Properties();
         File config = configFile.toFile();
         if (!config.exists()) {
-            throwRuntime("Config file %s not found. Run fireguard with no arguments to see the example of it.",
+            throw new XRE(
+                    "Config file %s not found. Run fireguard with no arguments to see the example"
+                            + " of it.",
                     config);
         }
         FileInputStream in = new FileInputStream(config);

@@ -35,11 +35,10 @@ net command accepts following arguments:
 
 # Documentation
 
-http://portal2.atwebpages.com/fireguard
+[Documentation](http://portal2.atwebpages.com/fireguard)
 
 # Download
 
-You can download **fireguard** from <https://github.com/lambdaprime/fireguard/releases>
+[Release versions](fireguard/release/CHANGELOG.md)
 
-
-lambdaprime <id.blackmesa@gmail.com>
+lambdaprime <intid@protonmail.com>

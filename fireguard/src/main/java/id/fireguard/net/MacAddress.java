@@ -1,18 +1,30 @@
-/**
- * Copyright 2020 lambdaprime
+/*
+ * Copyright 2020 fireguard project
  * 
- * Email: id.blackmesa@gmail.com 
- * Website: https://github.com/lambdaprime
+ * Website: https://github.com/lambdaprime/fireguard
  * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package id.fireguard.net;
 
+import id.xfunction.Preconditions;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.StringJoiner;
 
-import id.xfunction.XAsserts;
-
+/**
+ * @author lambdaprime intid@protonmail.com
+ */
 public class MacAddress implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -44,7 +56,7 @@ public class MacAddress implements Serializable {
 
     public static MacAddress parseMac(String mac) {
         String[] a = mac.split(":");
-        XAsserts.assertTrue(a.length == 6, "Wrong MAC address format");
+        Preconditions.isTrue(a.length == 6, "Wrong MAC address format");
         long v = 0;
         for (int i = 0; i < a.length; i++) {
             v <<= 8;
@@ -76,7 +88,7 @@ public class MacAddress implements Serializable {
     @Override
     public String toString() {
         var sj = new StringJoiner(":");
-        for (byte i: getBytes()) {
+        for (byte i : getBytes()) {
             var t = Integer.toHexString(Byte.toUnsignedInt(i));
             t = t.toUpperCase();
             t = "0".repeat(2 - t.length()) + t;

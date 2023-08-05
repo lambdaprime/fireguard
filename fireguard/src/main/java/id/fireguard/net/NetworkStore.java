@@ -1,20 +1,32 @@
-/**
- * Copyright 2020 lambdaprime
+/*
+ * Copyright 2020 fireguard project
  * 
- * Email: id.blackmesa@gmail.com 
- * Website: https://github.com/lambdaprime
+ * Website: https://github.com/lambdaprime/fireguard
  * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package id.fireguard.net;
 
+import id.xfunction.ObjectStore;
 import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 
-import id.xfunction.ObjectStore;
-
+/**
+ * @author lambdaprime intid@protonmail.com
+ */
 public class NetworkStore {
 
     private ObjectStore<HashSet<NetworkEntity>> store;
@@ -30,7 +42,8 @@ public class NetworkStore {
     }
 
     public void add(NetworkEntity entity) {
-        if (findAll().stream().map(NetworkEntity::getSubnet)
+        if (findAll().stream()
+                .map(NetworkEntity::getSubnet)
                 .anyMatch(Predicate.isEqual(entity.getSubnet())))
             throw new RuntimeException("Net with such subnet already exist");
         set.add(entity);
@@ -52,9 +65,7 @@ public class NetworkStore {
     }
 
     public Optional<NetworkEntity> findNet(String netId) {
-        return set.stream()
-                .filter(net -> net.getId().equals(netId))
-                .findFirst();
+        return set.stream().filter(net -> net.getId().equals(netId)).findFirst();
     }
 
     public Optional<NetworkInterfaceEntity> findIface(String ifaceId) {

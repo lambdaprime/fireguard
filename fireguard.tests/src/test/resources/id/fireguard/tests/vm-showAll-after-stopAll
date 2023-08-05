@@ -4,7 +4,7 @@ socket: /tmp/store*/stage/vm-1/firecracker.sock
 state: STOPPED
 pid: Optional.empty
 vmConfig: path: /tmp/store*/stage/vm-1/vm_config.json
-memoryGb: 1000
+memoryGb: 200
 vcpu: 1
 hostIface: Optional.empty
 mac: Optional.empty
@@ -16,7 +16,7 @@ socket: /tmp/store*/stage/vm-2/firecracker.sock
 state: STOPPED
 pid: Optional.empty
 vmConfig: path: /tmp/store*/stage/vm-2/vm_config.json
-memoryGb: 1000
+memoryGb: 200
 vcpu: 1
 hostIface: Optional[tap1]
 mac: Optional[00:00:00:00:00:01]
@@ -28,7 +28,7 @@ socket: /tmp/store*/stage/vm-3/firecracker.sock
 state: STOPPED
 pid: Optional.empty
 vmConfig: path: /tmp/store*/stage/vm-3/vm_config.json
-memoryGb: 1000
+memoryGb: 200
 vcpu: 1
 hostIface: Optional.empty
 mac: Optional.empty

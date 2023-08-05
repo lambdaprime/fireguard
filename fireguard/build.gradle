@@ -1,75 +1,83 @@
-// gradle clean build
+// include xfunction for updateVersion
+buildscript {
+  repositories {
+    mavenCentral()
+  }
+  dependencies {
+    classpath "io.github.lambdaprime:id.xfunction:14.0"
+  }
+}
 
 plugins {
-    id 'java'
+  id 'com.diffplug.spotless'
 }
 
-repositories {
-    mavenCentral()
+apply plugin : 'eclipse'
+
+eclipse.classpath.file {
+  // instruct eclipse plugin to put everything to module path
+  whenMerged {
+    entries.findAll { it.kind == 'lib' }.each { it.entryAttributes['module'] = 'true' }
+  }
 }
- 
+
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
+  implementation "io.github.lambdaprime:id.xfunction:20.0"
 }
 
-sourceCompatibility = '11'
-targetCompatibility = '11'
-
-def releaseDir = "release/${projectName}/${projectName}"
-
-jar { 
-    manifest { 
-        attributes 'Implementation-Version': "${rootProject.version}",
-                   'Class-Path': configurations.compile.collect { it.getName() }.join(' ')
-    }
+configurations {
+  customConfig.extendsFrom implementation
 }
 
-compileJava {
-    doFirst {
-        options.compilerArgs = [
-            '--module-path', classpath.asPath,
-        ]
-        classpath = files()  
-    }
+jar {
+  manifest { 
+    attributes 'Implementation-Version': "${rootProject.version}",
+      'Main-Class': 'id.bootstrap.helloapp.HelloApp'
+  }
 }
 
-task packageDistribution(type: Zip) {
-    archiveFileName = "$releaseFileName"
-    destinationDirectory = file("$projectDir/release")
-    from file("$projectDir/release/$projectName")
+def packageDir = "$buildDir/package/${projectName}"
+
+ext.artifacts = fileTree(include: ['*'], dir: "$packageDir/libs")
+
+task createRelease(type: Zip) {
+  archiveFileName = "$releaseFileName"
+  destinationDirectory = file("$projectDir/release")
+  from file("$packageDir/..")
 }
 
-packageDistribution.doLast {
-    delete "$projectDir/release/$projectName"
+task copyLibs(type: Copy) {
+  from configurations.customConfig 
+  from jar.archiveFile
+  into "${packageDir}/libs"
 }
 
-import org.apache.tools.ant.filters.ReplaceTokens
-task updateVersion(type:Copy) {
-    from "${project.rootDir}/README.md"
-    into releaseDir
-    filter(ReplaceTokens, tokens: [version: rootProject.version])
+task copyReadme(type: Copy) {
+  from("../README.md")
+  into("$buildDir/resources/main")
+  rename ("README.md", "README-${projectName}.md")
 }
 
-task createRelease(type: Copy) {
-    from jar.archiveFile
-    from file("$projectDir/libs")
-    from "${project.rootDir}/README.md"
-    from "${project.rootDir}/docs"
-    from "$projectDir/src/fireguard"
-    into releaseDir
+// overwrite template README which comes from resources folder
+jar.dependsOn copyReadme
+
+javadoc.enabled = false
+
+task createPackage(type: Copy, dependsOn: [copyLibs]) {
+  from "${project.rootDir}/README.md"
+  from "${project.rootDir}/docs"
+  from "$projectDir/src/fireguard"
+  into packageDir
 }
 
 task cleanRelease(type: Delete) {
-    delete "$projectDir/release"
+  delete "$packageDir"
+  delete "$projectDir/release/*-SNAPSHOT.zip"
 }
 
-packageDistribution.dependsOn createRelease
-assemble.dependsOn packageDistribution
+createRelease.dependsOn createPackage
+assemble.dependsOn createRelease
 clean.dependsOn cleanRelease
 
-task copyReadme(type: Copy) {
-    from("${project.rootDir}/README.md")
-    into("$projectDir/src/main/resources")
-}
-
-compileJava.dependsOn copyReadme
+// run spotless and format code before the build
+classes.dependsOn spotlessApply
